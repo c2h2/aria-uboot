@@ -1,0 +1,7 @@
+luna-uboot
+==========
+
+Init from u-boot-2013.01.01-psp05.07.00.00 ti sdk.
+
+
+Project going to add NAND, 2 PHY and 512MB DDR3 pinmux and support.
