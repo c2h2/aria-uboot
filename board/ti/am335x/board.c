@@ -86,6 +86,11 @@ int board_is_evm_15_or_later(void)
 		strncmp("1.5", header.version, 3) <= 0);
 }
 
+static int board_is_itc(void){
+  return 1;
+	//return !strncmp("A335XITC", header.name, HDR_NAME_LEN);
+}
+
 /*
  * Read header information from EEPROM into global structure.
  */
@@ -542,36 +547,29 @@ void s_init(void)
     if(eeprom_ret_val ==  -EINVAL){
       //we assume its an ITC luna board
       puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an ITC luna board.\n");
+      strcpy("A335XITC", header.name);
     }else{
       puts("Could not get board ID.\n");
     }
   }
 
 	enable_board_pin_mux(&header);
-	if (board_is_evm_sk()) {
+	if (board_is_evm_sk() || board_is_itc() ) {
 		/*
 		 * EVM SK 1.2A and later use gpio0_7 to enable DDR3.
 		 * This is safe enough to do on older revs.
 		 */
 		gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
 		gpio_direction_output(GPIO_DDR_VTT_EN, 1);
-	}
-
-	if (board_is_evm_sk() || board_is_bone_lt())
-		config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data,
-			   &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
-	else if (board_is_evm_15_or_later())
-		config_ddr(303, MT41J512M8RH125_IOCTRL_VALUE, &ddr3_evm_data,
-			   &ddr3_evm_cmd_ctrl_data, &ddr3_evm_emif_reg_data);
-	else
-    puts("c2h2: configure DDR3\n");
-    gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
-    gpio_direction_output(GPIO_DDR_VTT_EN, 1);
-
-    config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
-    puts("c2h2: configure DDR3 completed\n");
-		// c2h2 disable next line
-    //config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data, &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
+  }
+  if (board_is_evm_sk() || board_is_bone_lt() || board_is_itc() ){
+		config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
+    puts("c2h2: configure DDR3 303MHz completed.\n");
+  }else if (board_is_evm_15_or_later()){
+		config_ddr(303, MT41J512M8RH125_IOCTRL_VALUE, &ddr3_evm_data, &ddr3_evm_cmd_ctrl_data, &ddr3_evm_emif_reg_data);
+  }	else {
+    config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data, &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
+  }
 #endif
 }
 
@@ -680,7 +678,8 @@ int board_eth_init(bd_t *bis)
 			eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
 
-	if (board_is_bone() || board_is_bone_lt() || board_is_idk()) {
+	if (board_is_bone() || board_is_bone_lt() || board_is_idk() || board_is_itc() ) {
+    puts("c2h2: itc board registering cpsw\n");
 		writel(MII_MODE_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
 				PHY_INTERFACE_MODE_MII;
