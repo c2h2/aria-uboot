@@ -395,6 +395,11 @@ static struct emif_regs ddr3_evm_emif_reg_data = {
 
 void am33xx_spl_board_init(void)
 {
+  puts("c2h2: setting CPU to 720MHz\n");
+  mpu_pll_config(MPUPLL_M_720);
+  puts("c2h2: setting CPU to 720MHz, is completed.\n");
+  return;
+
 	if (!strncmp("A335BONE", header.name, 8)) {
 		/* BeagleBone PMIC Code */
 		uchar pmic_status_reg;
@@ -531,8 +536,16 @@ void s_init(void)
 	/* Initalize the board header */
 	enable_i2c0_pin_mux();
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
-	if (read_eeprom() < 0)
-		puts("Could not get board ID.\n");
+  puts("c2h2: 1st get board info.\n");
+  int eeprom_ret_val = read_eeprom();
+	if (eeprom_ret_val < 0){	
+    if(eeprom_ret_val ==  -EINVAL){
+      //we assume its an ITC luna board
+      puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an ITC luna board.\n");
+    }else{
+      puts("Could not get board ID.\n");
+    }
+  }
 
 	enable_board_pin_mux(&header);
 	if (board_is_evm_sk()) {
@@ -551,8 +564,14 @@ void s_init(void)
 		config_ddr(303, MT41J512M8RH125_IOCTRL_VALUE, &ddr3_evm_data,
 			   &ddr3_evm_cmd_ctrl_data, &ddr3_evm_emif_reg_data);
 	else
-		config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data,
-			   &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
+    puts("c2h2: configure DDR3\n");
+    gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
+    gpio_direction_output(GPIO_DDR_VTT_EN, 1);
+
+    config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
+    puts("c2h2: configure DDR3 completed\n");
+		// c2h2 disable next line
+    //config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data, &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
 #endif
 }
 
@@ -561,6 +580,7 @@ void s_init(void)
  */
 int board_init(void)
 {
+  puts("c2h2: 2nd get board info");
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 	if (read_eeprom() < 0)
 		puts("Could not get board ID.\n");
