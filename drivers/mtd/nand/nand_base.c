@@ -2623,6 +2623,8 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	*maf_id = chip->read_byte(mtd);
 	*dev_id = chip->read_byte(mtd);
 
+  printk(KERN_INFO "c2h2: mafid,devid = %02x,%02x", *maf_id, *dev_id);
+
 	/* Try again to make sure, as some systems the bus-hold or other
 	 * interface concerns can cause random data which looks like a
 	 * possibly credible NAND flash to appear. If the two results do
@@ -2630,6 +2632,7 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	 */
 
 	chip->cmdfunc(mtd, NAND_CMD_READID, 0x00, -1);
+
 
 	for (i = 0; i < 2; i++)
 		id_data[i] = chip->read_byte(mtd);
@@ -2640,9 +2643,13 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 		       *maf_id, *dev_id, id_data[0], id_data[1]);
 		return ERR_PTR(-ENODEV);
 	}
+  printk(KERN_INFO "c2h2: 2\n");
 
-	if (!type)
+	if (!type){
+    printk(KERN_INFO "c2h2: 2.5\n");
+    
 		type = nand_flash_ids;
+  }
 
 	for (; type->name != NULL; type++)
 		if (*dev_id == type->id)
@@ -2663,9 +2670,12 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	for (i = 0; i < 8; i++)
 		id_data[i] = chip->read_byte(mtd);
 
-	if (!type->name)
+  printk(KERN_INFO "c2h2: 3\n");
+	if (!type->name){
 		return ERR_PTR(-ENODEV);
+  }
 
+  printk(KERN_INFO "c2h2: 4");
 	if (!mtd->name)
 		mtd->name = type->name;
 
@@ -2720,15 +2730,29 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 			/* Calc pagesize */
 			mtd->writesize = 1024 << (extid & 0x03);
 			extid >>= 2;
-			/* Calc oobsize */
-			mtd->oobsize = (8 << (extid & 0x01)) *
-				(mtd->writesize >> 9);
-			extid >>= 2;
-			/* Calc blocksize. Blocksize is multiples of 64KiB */
-			mtd->erasesize = (64 * 1024) << (extid & 0x03);
-			extid >>= 2;
-			/* Get buswidth information */
-			busw = (extid & 0x01) ? NAND_BUSWIDTH_16 : 0;
+
+     /* Check for 5 byte ID + Micron + read more 0x00 */
+      if (id_data[0] == NAND_MFR_MICRON && id_data[4] != 0x00
+         && mtd->writesize >= 4096
+         && id_data[5] == 0x00
+         && id_data[6] == 0x00) {
+       mtd->oobsize = ((extid & 0x03) == 0x03) ? 218
+         : 224;
+       extid >>= 3;
+       mtd->erasesize = (256 * 1024) << (extid & 0x03);
+       /* All Micron have busw x8? */
+       busw = 0;
+      } else {
+       /* Calc oobsize */
+       mtd->oobsize = (8 << (extid & 0x01)) *
+         (mtd->writesize >> 9);
+       extid >>= 2;
+       /* Calc blocksize (multiples of 64KiB) */
+       mtd->erasesize = (64 * 1024) << (extid & 0x03);
+       extid >>= 2;
+       /* Get buswidth information */
+       busw = (extid & 0x01) ? NAND_BUSWIDTH_16 : 0;
+      }
 		}
 	} else {
 		/*
@@ -2752,6 +2776,7 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 			mtd->erasesize <<= ((id_data[3] & 0x03) << 1);
 		}
 	}
+  printk(KERN_INFO "c2h2: 5");
 	/* Get chip options, preserve non chip based options */
 	chip->options |= type->options;
 
@@ -2777,6 +2802,7 @@ ident_done:
 	 * Check, if buswidth is correct. Hardware drivers should set
 	 * chip correct !
 	 */
+  printk(KERN_INFO "c2h2: 6");
 	if (busw != (chip->options & NAND_BUSWIDTH_16)) {
 		printk(KERN_INFO "NAND device: Manufacturer ID:"
 		       " 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id,
@@ -2849,6 +2875,7 @@ ident_done:
 	if (mtd->writesize > 512 && chip->cmdfunc == nand_command)
 		chip->cmdfunc = nand_command_lp;
 
+  printk(KERN_WARNING "c2h2: NAND device: Manufacturer ID: 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,  nand_manuf_ids[maf_idx].name, name);
 	/* TODO onfi flash name */
 	name = type->name;
 #ifdef CONFIG_SYS_NAND_ONFI_DETECTION
@@ -2858,7 +2885,7 @@ ident_done:
 	MTDDEBUG(MTD_DEBUG_LEVEL0, "NAND device: Manufacturer ID:"
 		 " 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,
 		 nand_manuf_ids[maf_idx].name, name);
-
+  printk(KERN_WARNING "c2h2: NAND device: Manufacturer ID: 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,  nand_manuf_ids[maf_idx].name, name);
 	return type;
 }
 
