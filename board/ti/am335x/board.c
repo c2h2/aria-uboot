@@ -597,8 +597,8 @@ void s_init(void)
   }
   
   if (board_is_itc()){
-    config_ddr(303, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
-    puts("c2h2: configure DDR3 303MHz completed.\n");
+    config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+    puts("c2h2: configure DDR3 400MHz completed.\n");
   }else if (board_is_evm_sk() || board_is_bone_lt()){
 		config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
   }else if (board_is_evm_15_or_later()){
@@ -620,6 +620,8 @@ int board_init(void)
 		puts("Could not get board ID.\n");
 
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
+
+  Lcd_Init(); //make lcd work
 
 	gpmc_init();
 

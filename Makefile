@@ -332,6 +332,8 @@ LIBS-y += common/libcommon.o
 LIBS-y += lib/libfdt/libfdt.o
 LIBS-y += api/libapi.o
 LIBS-y += post/libpost.o
+LIBS-y += drivers/lcd/liblcd.o 
+LIBS-y += drivers/lcd/gpio_v2.o 
 LIBS-y += test/libtest.o
 
 ifneq ($(CONFIG_AM33XX)$(CONFIG_OMAP34XX)$(CONFIG_OMAP44XX)$(CONFIG_OMAP54XX),)

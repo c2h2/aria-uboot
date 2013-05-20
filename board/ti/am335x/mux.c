@@ -192,6 +192,39 @@ static struct module_pin_mux itc_mii1_pin_mux[] = {
         {-1},
 };
 
+static struct module_pin_mux lcdc_pin_mux[] = {
+    {OFFSET(gpmc_csn3),   (MODE(7) | PULLUDEN)},    /* GPIO2_0 ,LCD_PWREN */
+    {OFFSET(lcd_data0),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_0  */
+    {OFFSET(lcd_data1),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_1  */
+    {OFFSET(lcd_data2),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_2  */
+    {OFFSET(lcd_data3),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_3  */
+    {OFFSET(lcd_data4),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_4  */
+    {OFFSET(lcd_data5),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_5  */
+    {OFFSET(lcd_data6),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_6  */
+    {OFFSET(lcd_data7),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_7  */
+    {OFFSET(lcd_data8),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_8  */
+    {OFFSET(lcd_data9),     MODE(0) | PULLUDEN},    /* Makesure lcd_data_9  */
+    {OFFSET(lcd_data10),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_10 */
+    {OFFSET(lcd_data11),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_11 */
+    {OFFSET(lcd_data12),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_12 */
+    {OFFSET(lcd_data13),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_13 */
+    {OFFSET(lcd_data14),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_14 */
+    {OFFSET(lcd_data15),    MODE(0) | PULLUDEN},    /* Makesure lcd_data_15 */
+    {OFFSET(gpmc_ad15),     MODE(1) | PULLUDEN},    /* lcd_data_16 */
+    {OFFSET(gpmc_ad14),     MODE(1) | PULLUDEN},    /* lcd_data_17 */
+    {OFFSET(gpmc_ad13),     MODE(1) | PULLUDEN},    /* lcd_data_18 */
+    {OFFSET(gpmc_ad12),     MODE(1) | PULLUDEN},    /* lcd_data_19 */
+    {OFFSET(gpmc_ad11),     MODE(1) | PULLUDEN},    /* lcd_data_20 */
+    {OFFSET(gpmc_ad10),     MODE(1) | PULLUDEN},    /* lcd_data_21 */
+    {OFFSET(gpmc_ad9),      MODE(1) | PULLUDEN},    /* lcd_data_22 */
+    {OFFSET(gpmc_ad8),      MODE(1) | PULLUDEN},    /* lcd_data_23 */
+    {OFFSET(lcd_pclk),          MODE(0) | PULLUDEN},    /* lcd_pclk */
+    {OFFSET(lcd_vsync),         MODE(0) | PULLUDEN},    /* lcd_vsync */
+    {OFFSET(lcd_hsync),         MODE(0) | PULLUDEN},    /* lcd_hsync */
+    {OFFSET(lcd_ac_bias_en),    MODE(0) | PULLUDEN},    /* lcd_ac_bias */
+    {-1},
+};
+
 static struct module_pin_mux nand_pin_mux[] = {
 	{OFFSET(gpmc_ad0), (MODE(0) | PULLUP_EN | RXACTIVE)},	/* NAND AD0 */
 	{OFFSET(gpmc_ad1), (MODE(0) | PULLUP_EN | RXACTIVE)},	/* NAND AD1 */
@@ -332,6 +365,7 @@ void enable_board_pin_mux(struct am335x_baseboard_id *header)
     configure_module_pin_mux(nand_pin_mux);
     configure_module_pin_mux(itc_mii1_pin_mux);
     configure_module_pin_mux(mmc0_pin_mux_sk_evm);
+    configure_module_pin_mux(lcdc_pin_mux);
     
     puts("c2h2: pinmux complete for ITC luna.\n"); 
 	//	puts("Unknown board, cannot configure pinmux.");

@@ -513,3 +513,6 @@
 #endif
 
 #endif	/* ! __CONFIG_AM335X_EVM_H */
+
+/* LCD Support */
+#define CONFIG_LCD_TCM  
