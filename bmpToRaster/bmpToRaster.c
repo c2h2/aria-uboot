@@ -162,7 +162,8 @@ void ProcessDataForFrameBuffer(int fd, unsigned int dwSize, IMAGEPTR* Image, FIL
 	unsigned short int*		temp;
 	unsigned char*			pData;
 	char 				comma = ',',new_line = '\n';
-	char a[]  = "unsigned short const image[] = {";
+  char a[]  = "unsigned short const image[] = {";
+  //char a[] = "#ifndef CONFIG_SPL_BUILD\nunsigned int const image1[] __attribute__((aligned(4)))= {\n";
         #ifdef  COMPRESS
 	char d[] = "0x01004000u, 0x07000001u, ";
         #else
@@ -170,7 +171,9 @@ void ProcessDataForFrameBuffer(int fd, unsigned int dwSize, IMAGEPTR* Image, FIL
         #endif
 	char e[] = "0x0000u, 0x0000u, 0x0000u, 0x0000u, 0x0000u, 0x0000u, 0x0000u, 0x0000u,";
 	char c[] = "};";
-	char f[] = "unsigned int const image[] = {";
+  //	char f[] = "unsigned int const image[] = {";
+  char f[] = "#ifndef CONFIG_SPL_BUILD\nunsigned int const image1[] __attribute__((aligned(4)))= {";
+  char g[] = "\n#endif\n";
 
         /* Now read the raw data */
         if(format == 0)
@@ -200,7 +203,7 @@ void ProcessDataForFrameBuffer(int fd, unsigned int dwSize, IMAGEPTR* Image, FIL
         }
         else
         {
-	      fprintf(fp,"%s\n", f);
+	      fprintf(fp,"%s\n",f);
 	      fprintf(fp,"%s\n",d);
         }
 
@@ -334,5 +337,6 @@ void ProcessDataForFrameBuffer(int fd, unsigned int dwSize, IMAGEPTR* Image, FIL
         #endif
 
 	fprintf(fp,"%s",c);
+	fprintf(fp,"%s",g);
 }
 /* --------------------------------------- End of File --------------------------------*/
