@@ -2,9 +2,12 @@
 
 set -x
 export CROSS_COMPILE=arm-linux-gnueabihf-
+CORES=`getconf _NPROCESSORS_ONLN`
+
 rm u-boot.*
 rm MLO
-make -j4 am335x_evm
+make clean
+make -j${CORES} am335x_evm
 
 md5sum MLO 
 md5sum u-boot.img
