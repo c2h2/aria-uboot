@@ -6,7 +6,7 @@ include $(TOPDIR)/config.mk
 
 LIB	:= $(obj)liblcd.o
 
-COBJS-$(CONFIG_LCD_TCM) += rasterDisplay.o interrupt.o lcd.o raster.o
+COBJS-$(CONFIG_LCD_TCM) += rasterDisplay.o interrupt.o lcd.o raster.o gpio_v2.o
 
 COBJS	:= $(COBJS-y)
 SRCS	:= $(COBJS:.o=.c)
