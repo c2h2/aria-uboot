@@ -4,4 +4,31 @@ luna-uboot
 Init from u-boot-2013.01.01-psp05.07.00.00 ti sdk.
 
 
-Project going to add NAND, 2 PHY and 512MB DDR3 pinmux and support.
+
+
+master branch
+=============
+master branch is for itc core board
+
+
+aria branch
+===========
+aria branch is for aira board with ddr3 
+
+
+
+to build
+========
+install cross compiling for AM335x: http://w.g77k.com/Gcc_cross_compiler_(armhf)
+    ./build.sh
+
+to install
+==========
+    ./install.sh
+
+
+potential issue
+===============
+we have copied ddr3 timing from official am335x repos. we are using the same ddr chip. but the pcb layout and other electric compoments are different.
+
+They might not 100% comptiable. We need to take care about.
