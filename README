@@ -5,7 +5,6 @@ Init from u-boot-2013.01.01-psp05.07.00.00 ti sdk.
 
 
 
-
 master branch
 =============
 master branch is for itc core board
@@ -13,8 +12,7 @@ master branch is for itc core board
 
 aria branch
 ===========
-aria branch is for aira board with ddr3 
-
+aria branch is for aria board with ddr3 
 
 
 to build
