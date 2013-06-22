@@ -579,7 +579,7 @@ void s_init(void)
 	if (eeprom_ret_val < 0){	
     if(eeprom_ret_val ==  -EINVAL){
       //we assume its an ITC luna board
-      puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an ITC luna board.\n");
+      puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an Aria board.\n");
       strcpy("A335XARIA", header.name);
     }else{
       puts("Could not get board ID.\n");
