@@ -47,6 +47,9 @@
 #include "ecap.h"
 //#include "hsi2c.h"
 
+#define FOUR_INCH_LCD 1
+#define FIVE_INCH_LCD 0
+
 /******************************************************************************
 **                      INTERNAL FUNCTION PROTOTYPES
 *******************************************************************************/
@@ -112,9 +115,10 @@ static void SetUpLCD(void)
 
     /* Disable raster */
     RasterDisable(SOC_LCDC_0_REGS);
-    
+
     /* Configure the pclk */
-    RasterClkConfig(SOC_LCDC_0_REGS, 23040000, 192000000);
+    //RasterClkConfig(SOC_LCDC_0_REGS, 9000000, 92000000);
+    RasterClkConfig(SOC_LCDC_0_REGS, 7833600, 150000000);
 
     /* Configuring DMA of LCD controller */ 
     RasterDMAConfig(SOC_LCDC_0_REGS, RASTER_DOUBLE_FRAME_BUFFER,
@@ -134,12 +138,20 @@ static void SetUpLCD(void)
                                             RASTER_SYNC_CTRL_ACTIVE|
                                             RASTER_AC_BIAS_HIGH     , 0, 255);
 
+#if FIVE_INCH_LCD
     /* Configuring horizontal timing parameter */
     RasterHparamConfig(SOC_LCDC_0_REGS, 800, 48, 40, 40);
 
     /* Configuring vertical timing parameters */
     RasterVparamConfig(SOC_LCDC_0_REGS, 480, 3, 13, 29);
+#endif
+#if FOUR_INCH_LCD //NHD-4.3-ATXI#-T-1
+    /* Configuring horizontal timing parameter */
+    RasterHparamConfig(SOC_LCDC_0_REGS, 480, 4, 8, 43);
 
+    /* Configuring vertical timing parameters */
+    RasterVparamConfig(SOC_LCDC_0_REGS, 272, 10, 4, 12);
+#endif
 
     RasterFIFODMADelayConfig(SOC_LCDC_0_REGS, 128);
 
