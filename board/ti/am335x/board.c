@@ -86,7 +86,7 @@ int board_is_evm_15_or_later(void)
 		strncmp("1.5", header.version, 3) <= 0);
 }
 
-static int board_is_itc(void){
+static int board_is_aria(void){
   return 1;
 	//return !strncmp("A335XITC", header.name, HDR_NAME_LEN);
 }
@@ -580,14 +580,14 @@ void s_init(void)
     if(eeprom_ret_val ==  -EINVAL){
       //we assume its an ITC luna board
       puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an ITC luna board.\n");
-      strcpy("A335XITC", header.name);
+      strcpy("A335XARIA", header.name);
     }else{
       puts("Could not get board ID.\n");
     }
   }
 
 	enable_board_pin_mux(&header);
-	if (board_is_evm_sk() || board_is_itc() ) {
+	if (board_is_evm_sk() || board_is_aria() ) {
 		/*
 		 * EVM SK 1.2A and later use gpio0_7 to enable DDR3.
 		 * This is safe enough to do on older revs.
@@ -596,7 +596,7 @@ void s_init(void)
 		gpio_direction_output(GPIO_DDR_VTT_EN, 1);
   }
   
-  if (board_is_itc()){
+  if (board_is_aria()){
     config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
     puts("c2h2: configure DDR3 400MHz completed.\n");
   }else if (board_is_evm_sk() || board_is_bone_lt()){
@@ -716,8 +716,8 @@ int board_eth_init(bd_t *bis)
 			eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
 
-	if (board_is_bone() || board_is_bone_lt() || board_is_idk() || board_is_itc() ) {
-    puts("c2h2: itc board registering cpsw\n");
+	if (board_is_bone() || board_is_bone_lt() || board_is_idk() || board_is_aria() ) {
+    puts("c2h2: Aria board registering cpsw\n");
 		writel(MII_MODE_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
 				PHY_INTERFACE_MODE_MII;
