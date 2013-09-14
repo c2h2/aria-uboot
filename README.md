@@ -1,32 +1,17 @@
-luna-uboot
-==========
+Ariaboard U-Boot
+================
 
 Init from u-boot-2013.01.01-psp05.07.00.00 ti sdk.
 
+This acts as BIOS for PC and works on Aria Board, Starts from $39 Texas Instruments Coretex-A8 Stamp Board.
 
 
-master branch
-=============
-master branch is for itc core board
-
-
-aria branch
-===========
-aria branch is for aria board with ddr3 
-
-
-to build
+To Build
 ========
-install cross compiling for AM335x: http://w.g77k.com/Gcc_cross_compiler_(armhf)
+Install cross compiling for AM335x:
     ./build.sh
 
-to install
-==========
+To Install to a SD Card
+=======================
     ./install.sh
 
-
-potential issue
-===============
-we have copied ddr3 timing from official am335x repos. we are using the same ddr chip. but the pcb layout and other electric compoments are different.
-
-They might not 100% comptiable. We need to take care about.
