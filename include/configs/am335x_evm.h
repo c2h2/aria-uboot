@@ -67,7 +67,7 @@
 	"dfu_alt_info_mmc=" DFU_ALT_INFO_MMC "\0" \
 	"dfu_alt_info_emmc=rawemmc mmc 0 3751936\0" \
 	"dfu_alt_info_nand=" DFU_ALT_INFO_NAND "\0" \
-	"mmcdev=0\0" \
+	"mmcdev=1\0" \
 	"mmcroot=/dev/mmcblk0p2 ro\0" \
 	"mmcrootfstype=ext4 rootwait\0" \
 	"nandroot=ubi0:rootfs rw ubi.mtd=7,2048\0" \
