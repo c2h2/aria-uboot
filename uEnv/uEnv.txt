@@ -1,10 +1,9 @@
-kernel_file=zImage
-initrd_file=initrd.img
+kernel_file=uImage
 
 console=ttyO0,115200n8
 
 mmcroot=/dev/mmcblk0p2 rw
-mmcrootfstype=ext3 rootwait fixrtc
+mmcrootfstype=ext4 rootwait fixrtc
 
 boot_fstype=fat
 xyz_load_image=${boot_fstype}load mmc 0:1 0x80300000 ${kernel_file}
