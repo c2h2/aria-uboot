@@ -21,3 +21,7 @@ Step 2: Get .h file from a .bmp file.
 $./a.out <No.of ROWS> <No.of Columns> <Source File Name> <Destination File name> <image format required 565/24><pixel odering RGB/BGR>
 
 
+OR use cmd:
+make
+./run.sh480x272.sh imagefile
+./install.s
