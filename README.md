@@ -22,7 +22,16 @@ Clone the source and
     cd aria-uboot    
     ./build.sh
 
+SD Card Boot Build
+==================
+Run this script before build, to change to SD card boot.
+    ./change_to_SD_boot.sh
+
+eMMC Boot Build
+===============
+Run this script before build, to change to eMMC boot.
+    ./change_to_eMMC_boot.sh
+
 To Install to a SD Card
 =======================
     ./install.sh
-
