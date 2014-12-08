@@ -61,7 +61,7 @@ void	flush_dcache_all(void)
  */
 void __enable_caches(void)
 {
-	puts("WARNING: Caches not enabled\n");
+	//	puts("WARNING: Caches not enabled\n"); //c2h2 disable
 }
 void enable_caches(void)
 	__attribute__((weak, alias("__enable_caches")));

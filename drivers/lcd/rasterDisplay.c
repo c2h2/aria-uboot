@@ -67,15 +67,10 @@ int Lcd_Init(void)
     //IntAINTCInit();
 
     LCDAINTCConfigure();
-    printf("Configured Interrupt\n");
-
-    
 
     LCDBackLightEnable();
-    printf("Cofigured Backlight\n");
 
     SetUpLCD();
-    printf("Configured LCD\n");
   
     // Configuring the base ceiling 
     RasterDMAFBConfig(SOC_LCDC_0_REGS, 

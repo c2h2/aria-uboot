@@ -124,8 +124,6 @@ static int read_eeprom(void)
 		}
 
 		if (header.magic != 0xEE3355AA) {
-			printf("Incorrect magic number (0x%x) in EEPROM\n",
-					header.magic);
 			return -EINVAL;
 		}
 	}
@@ -433,10 +431,9 @@ static struct emif_regs ddr3_evm_emif_reg_data = {
 
 void am33xx_spl_board_init(void)
 {
-  puts("c2h2: setting CPU to 720MHz\n");
-  mpu_pll_config(MPUPLL_M_720);
-  puts("c2h2: setting CPU to 720MHz, is completed.\n");
-  return;
+	mpu_pll_config(MPUPLL_M_800);
+	puts("CPU = 800MHz\n");
+	return;
 
 	if (!strncmp("A335BONE", header.name, 8)) {
 		/* BeagleBone PMIC Code */
@@ -574,38 +571,17 @@ void s_init(void)
 	/* Initalize the board header */
 	enable_i2c0_pin_mux();
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
-  puts("c2h2: 1st get board info.\n");
-  int eeprom_ret_val = read_eeprom();
-	if (eeprom_ret_val < 0){	
-    if(eeprom_ret_val ==  -EINVAL){
-      //we assume its an ITC luna board
-      puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an Aria board.\n");
-      strcpy("A335XARIA", header.name);
-    }else{
-      puts("Could not get board ID.\n");
-    }
-  }
 
 	enable_board_pin_mux(&header);
-	if (board_is_evm_sk() || board_is_aria() ) {
-		/*
-		 * EVM SK 1.2A and later use gpio0_7 to enable DDR3.
-		 * This is safe enough to do on older revs.
-		 */
-		gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
-		gpio_direction_output(GPIO_DDR_VTT_EN, 1);
-  }
+	/*
+	 * EVM SK 1.2A and later use gpio0_7 to enable DDR3.
+	 * This is safe enough to do on older revs.
+	 */
+	gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
+	gpio_direction_output(GPIO_DDR_VTT_EN, 1);
   
-  if (board_is_aria()){
-    config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
-    puts("c2h2: configure DDR3 400MHz completed.\n");
-  }else if (board_is_evm_sk() || board_is_bone_lt()){
-		config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
-  }else if (board_is_evm_15_or_later()){
-		config_ddr(303, MT41J512M8RH125_IOCTRL_VALUE, &ddr3_evm_data, &ddr3_evm_cmd_ctrl_data, &ddr3_evm_emif_reg_data);
-  }	else {
-    config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data, &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
-  }
+    	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+    	puts("DDR3 = 400MHz\n");
 #endif
 }
 
@@ -614,16 +590,14 @@ void s_init(void)
  */
 int board_init(void)
 {
-  puts("c2h2: 2nd get board info");
+	//puts("c2h2: 2nd get board info");
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
-	if (read_eeprom() < 0)
-		puts("Could not get board ID.\n");
 
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
 
-  Lcd_Init(); //make lcd work
+	Lcd_Init(); //make lcd work
 
-	gpmc_init();
+	//gpmc_init();
 
 	return 0;
 }
@@ -717,10 +691,9 @@ int board_eth_init(bd_t *bis)
 	}
 
 	if (board_is_bone() || board_is_bone_lt() || board_is_idk() || board_is_aria() ) {
-    puts("c2h2: Aria board registering cpsw\n");
-		writel(MII_MODE_ENABLE, &cdev->miisel);
-		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
-				PHY_INTERFACE_MODE_MII;
+		//puts("c2h2: Aria board registering cpsw\n");
+		//writel(MII_MODE_ENABLE, &cdev->miisel);
+		//cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if = PHY_INTERFACE_MODE_MII;
 	} else {
 		writel(RGMII_MODE_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
