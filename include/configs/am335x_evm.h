@@ -21,15 +21,17 @@
 #include <asm/arch/cpu.h>
 #include <asm/arch/hardware.h>
 
+#define CONFIG_SILENT_CONSOLE 1
+
 #define CONFIG_DMA_COHERENT
 #define CONFIG_DMA_COHERENT_SIZE	(1 << 20)
 
 #define CONFIG_ENV_SIZE			(128 << 10)	/* 128 KiB */
 #define CONFIG_SYS_MALLOC_LEN		(1024 << 10)
-#define CONFIG_SYS_LONGHELP		/* undef to save memory */
+#undef CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
-#define CONFIG_SYS_PROMPT		"U-Boot# "
-#define CONFIG_BOARD_LATE_INIT
+#define CONFIG_SYS_PROMPT		"Aria# "
+#undef CONFIG_BOARD_LATE_INIT
 #define CONFIG_SYS_NO_FLASH
 #define MACH_TYPE_TIAM335EVM		3589	/* Until the next sync */
 #define CONFIG_MACH_TYPE		MACH_TYPE_TIAM335EVM
@@ -48,7 +50,7 @@
 #define CONFIG_VERSION_VARIABLE
 
 /* set to negative value for no autoboot */
-#define CONFIG_BOOTDELAY		1
+#define CONFIG_BOOTDELAY		0
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #ifndef CONFIG_SPL_BUILD

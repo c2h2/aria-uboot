@@ -96,6 +96,7 @@ static int board_is_aria(void){
  */
 static int read_eeprom(void)
 {
+	return 0;
 	/* Check if baseboard eeprom is available */
 	if (i2c_probe(CONFIG_SYS_I2C_EEPROM_ADDR)) {
 		puts("Could not probe the EEPROM; something fundamentally "
@@ -727,17 +728,6 @@ int board_eth_init(bd_t *bis)
 		miiphy_write(devname, 0x0, AR8051_PHY_DEBUG_DATA_REG,
 				AR8051_RGMII_TX_CLK_DLY);
 	}
-#endif
-#if defined(CONFIG_USB_ETHER) && \
-	(!defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_USBETH_SUPPORT))
-	if (is_valid_ether_addr(mac_addr))
-		eth_setenv_enetaddr("usbnet_devaddr", mac_addr);
-
-	rv = usb_eth_initialize(bis);
-	if (rv < 0)
-		printf("Error %d registering USB_ETHER\n", rv);
-	else
-		n += rv;
 #endif
 	return n;
 }

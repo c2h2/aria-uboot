@@ -167,6 +167,7 @@ static int display_dram_config(void)
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
 static int init_func_i2c(void)
 {
+	return 0; //c2h2 disable i2c
 	puts("I2C:   ");
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 	puts("ready\n");
@@ -663,8 +664,8 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	bb_miiphy_init();
 #endif
 #if defined(CONFIG_CMD_NET)
-	puts("Net:   ");
-	eth_initialize(gd->bd);
+	//puts("Net:   ");
+	//eth_initialize(gd->bd);
 #if defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");
 	reset_phy();

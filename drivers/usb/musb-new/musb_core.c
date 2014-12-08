@@ -1406,6 +1406,7 @@ enum { MUSB_CONTROLLER_MHDRC, MUSB_CONTROLLER_HDRC, };
  */
 static int __devinit musb_core_init(u16 musb_type, struct musb *musb)
 {
+	return 0;
 	u8 reg;
 	char *type;
 	char aInfo[90], aRevision[32], aDate[12];
@@ -2477,6 +2478,7 @@ static struct platform_driver musb_driver = {
 
 static int __init musb_init(void)
 {
+	return 0;
 	if (usb_disabled())
 		return 0;
 

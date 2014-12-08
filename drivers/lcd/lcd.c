@@ -424,12 +424,12 @@ void LCDBackLightEnable(void)
   if(GPIO_BL){
     //enable gpio3 clock.
     GPIO3ModuleClkConfig();
-    printf("GPIO3 Module CLK completed.\n");
+    //printf("GPIO3 Module CLK completed.\n");
 
     //pinmux for 113u
     HWREG(SOC_CONTROL_REGS + CONTROL_CONF_MCASP0_AHCLKR) =  (CONTROL_CONF_MCASP0_AHCLKR_CONF_MCASP0_AHCLKR_RXACTIVE | CONTROL_CONF_MUXMODE(7));
 //    GPIO_PMUX_OFFADDR_VALUE(3, 17, PAD_FS_RXE_PD_PUPDE(7));
-    printf("3-17 pinmux completed.\n");
+    //printf("3-17 pinmux completed.\n");
 
     // Resetting the GPIO module. 
     GPIOModuleReset(SOC_GPIO_3_REGS);
