@@ -2623,7 +2623,7 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	*maf_id = chip->read_byte(mtd);
 	*dev_id = chip->read_byte(mtd);
 
-  printk(KERN_INFO "c2h2: mafid,devid = %02x,%02x", *maf_id, *dev_id);
+	printk(KERN_INFO "manu_id,dev_id = %02x,%02x", *maf_id, *dev_id);
 
 	/* Try again to make sure, as some systems the bus-hold or other
 	 * interface concerns can cause random data which looks like a
@@ -2643,10 +2643,8 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 		       *maf_id, *dev_id, id_data[0], id_data[1]);
 		return ERR_PTR(-ENODEV);
 	}
-  printk(KERN_INFO "c2h2: 2\n");
 
 	if (!type){
-    printk(KERN_INFO "c2h2: 2.5\n");
     
 		type = nand_flash_ids;
   }
@@ -2670,12 +2668,10 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	for (i = 0; i < 8; i++)
 		id_data[i] = chip->read_byte(mtd);
 
-  printk(KERN_INFO "c2h2: 3\n");
 	if (!type->name){
 		return ERR_PTR(-ENODEV);
   }
 
-  printk(KERN_INFO "c2h2: 4");
 	if (!mtd->name)
 		mtd->name = type->name;
 
@@ -2776,7 +2772,6 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 			mtd->erasesize <<= ((id_data[3] & 0x03) << 1);
 		}
 	}
-  printk(KERN_INFO "c2h2: 5");
 	/* Get chip options, preserve non chip based options */
 	chip->options |= type->options;
 
@@ -2802,7 +2797,6 @@ ident_done:
 	 * Check, if buswidth is correct. Hardware drivers should set
 	 * chip correct !
 	 */
-  printk(KERN_INFO "c2h2: 6");
 	if (busw != (chip->options & NAND_BUSWIDTH_16)) {
 		printk(KERN_INFO "NAND device: Manufacturer ID:"
 		       " 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id,
@@ -2875,7 +2869,6 @@ ident_done:
 	if (mtd->writesize > 512 && chip->cmdfunc == nand_command)
 		chip->cmdfunc = nand_command_lp;
 
-  printk(KERN_WARNING "c2h2: NAND device: Manufacturer ID: 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,  nand_manuf_ids[maf_idx].name, name);
 	/* TODO onfi flash name */
 	name = type->name;
 #ifdef CONFIG_SYS_NAND_ONFI_DETECTION
@@ -2885,7 +2878,6 @@ ident_done:
 	MTDDEBUG(MTD_DEBUG_LEVEL0, "NAND device: Manufacturer ID:"
 		 " 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,
 		 nand_manuf_ids[maf_idx].name, name);
-  printk(KERN_WARNING "c2h2: NAND device: Manufacturer ID: 0x%02x, Chip ID: 0x%02x (%s %s)\n", *maf_id, *dev_id,  nand_manuf_ids[maf_idx].name, name);
 	return type;
 }
 
