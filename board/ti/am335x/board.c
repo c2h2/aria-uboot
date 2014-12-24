@@ -433,81 +433,26 @@ static struct emif_regs ddr3_evm_emif_reg_data = {
 
 void am33xx_spl_board_init(void)
 {
-  puts("c2h2: setting CPU to 720MHz\n");
-  mpu_pll_config(MPUPLL_M_720);
-  puts("c2h2: setting CPU to 720MHz, is completed.\n");
-  return;
+#if 0
+	if (tps65217_reg_write(PROT_LEVEL_NONE, POWER_PATH, USB_INPUT_CUR_LIMIT_1300MA, USB_INPUT_CUR_LIMIT_MASK)) printf("tps65217_reg_write failure\n");
 
-	if (!strncmp("A335BONE", header.name, 8)) {
-		/* BeagleBone PMIC Code */
-		uchar pmic_status_reg;
-
-		if (i2c_probe(TPS65217_CHIP_PM))
-			return;
-
-		if (tps65217_reg_read(STATUS, &pmic_status_reg))
-			return;
-
-		/* Increase USB current limit to 1300mA */
-		if (tps65217_reg_write(PROT_LEVEL_NONE, POWER_PATH,
-				       USB_INPUT_CUR_LIMIT_1300MA,
-				       USB_INPUT_CUR_LIMIT_MASK))
-			printf("tps65217_reg_write failure\n");
-
-		/* Only perform PMIC configurations if board rev > A1 */
-		if (!strncmp(header.version, "00A1", 4))
-			return;
-
-		/* Set DCDC2 (MPU) voltage to 1.275V */
-		if (tps65217_voltage_update(DEFDCDC2,
-					     DCDC_VOLT_SEL_1275MV)) {
-			printf("tps65217_voltage_update failure\n");
-			return;
-		}
-
-		/* Set LDO3, LDO4 output voltage to 3.3V */
-		if (tps65217_reg_write(PROT_LEVEL_2, DEFLS1,
-				       LDO_VOLTAGE_OUT_3_3, LDO_MASK))
-			printf("tps65217_reg_write failure\n");
-
-		if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2,
-				       LDO_VOLTAGE_OUT_3_3, LDO_MASK))
-			printf("tps65217_reg_write failure\n");
-
-		if (!(pmic_status_reg & PWR_SRC_AC_BITMASK)) {
-			printf("No AC power, disabling frequency switch\n");
-			return;
-		}
-
-		/* Set MPU Frequency to 720MHz */
-		mpu_pll_config(MPUPLL_M_720);
-	} else {
-		uchar buf[4];
-		/*
-		 * EVM PMIC code.  All boards currently want an MPU voltage
-		 * of 1.2625V and CORE voltage of 1.1375V to operate at
-		 * 720MHz.
-		 */
-		if (i2c_probe(PMIC_CTRL_I2C_ADDR))
-			return;
-
-		/* VDD1/2 voltage selection register access by control i/f */
-		if (i2c_read(PMIC_CTRL_I2C_ADDR, PMIC_DEVCTRL_REG, 1, buf, 1))
-			return;
-
-		buf[0] |= PMIC_DEVCTRL_REG_SR_CTL_I2C_SEL_CTL_I2C;
-
-		if (i2c_write(PMIC_CTRL_I2C_ADDR, PMIC_DEVCTRL_REG, 1, buf, 1))
-			return;
-
-		if (!voltage_update(MPU, PMIC_OP_REG_SEL_1_2_6) &&
-				!voltage_update(CORE, PMIC_OP_REG_SEL_1_1_3)) {
-			if (board_is_evm_15_or_later())
-				mpu_pll_config(MPUPLL_M_800);
-			else
-				mpu_pll_config(MPUPLL_M_720);
-		}
+	* Set DCDC2 (MPU) voltage to 1.275V */
+	if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
+		printf("tps65217_voltage_update failure\n");
+		return;
 	}
+
+	/* Set LDO3, LDO4 output voltage to 3.3V */
+	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS1, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
+
+	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
+#endif
+
+
+	mpu_pll_config(MPUPLL_M_720);
+	puts("CPU:  800MHz\n");
+	return;
+
 }
 #endif
 
@@ -574,38 +519,19 @@ void s_init(void)
 	/* Initalize the board header */
 	enable_i2c0_pin_mux();
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
-  puts("c2h2: 1st get board info.\n");
-  int eeprom_ret_val = read_eeprom();
-	if (eeprom_ret_val < 0){	
-    if(eeprom_ret_val ==  -EINVAL){
-      //we assume its an ITC luna board
-      puts("c2h2: Read eeprom OKAY, but invalid info, we assume it is an Aria board.\n");
-      strcpy("A335XARIA", header.name);
-    }else{
-      puts("Could not get board ID.\n");
-    }
-  }
+	strcpy("A335XARIA", header.name);
 
 	enable_board_pin_mux(&header);
-	if (board_is_evm_sk() || board_is_aria() ) {
-		/*
-		 * EVM SK 1.2A and later use gpio0_7 to enable DDR3.
-		 * This is safe enough to do on older revs.
-		 */
-		gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
-		gpio_direction_output(GPIO_DDR_VTT_EN, 1);
-  }
-  
-  if (board_is_aria()){
-    config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
-    puts("c2h2: configure DDR3 400MHz completed.\n");
-  }else if (board_is_evm_sk() || board_is_bone_lt()){
-		config_ddr(303, MT41J128MJT125_IOCTRL_VALUE, &ddr3_data, &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data);
-  }else if (board_is_evm_15_or_later()){
-		config_ddr(303, MT41J512M8RH125_IOCTRL_VALUE, &ddr3_evm_data, &ddr3_evm_cmd_ctrl_data, &ddr3_evm_emif_reg_data);
-  }	else {
-    config_ddr(266, MT47H128M16RT25E_IOCTRL_VALUE, &ddr2_data, &ddr2_cmd_ctrl_data, &ddr2_emif_reg_data);
-  }
+	/*
+	* EVM SK 1.2A and later use gpio0_7 to enable DDR3.
+	* This is safe enough to do on older revs.
+	*/
+	gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
+	gpio_direction_output(GPIO_DDR_VTT_EN, 1);
+ 
+	/* c2h2 setting ddr3 */ 
+	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+	puts("DDR3: 800MHz\n");
 #endif
 }
 
@@ -614,14 +540,13 @@ void s_init(void)
  */
 int board_init(void)
 {
-  puts("c2h2: 2nd get board info");
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 	if (read_eeprom() < 0)
 		puts("Could not get board ID.\n");
 
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
 
-  Lcd_Init(); //make lcd work
+	Lcd_Init(); //make lcd work
 
 	gpmc_init();
 
