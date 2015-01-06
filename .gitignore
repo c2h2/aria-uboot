@@ -23,7 +23,7 @@
 # Top-level generic files
 #
 
-/MLO
+/MLO*
 /System.map
 /u-boot
 /u-boot.hex
@@ -45,6 +45,7 @@
 /u-boot.geany
 /include/u-boot.lst
 
+/deploy
 #
 # Generated files
 #

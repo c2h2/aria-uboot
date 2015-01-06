@@ -8,16 +8,16 @@ DIR=/mnt
 umount $DIR
 set -e
 mount $PART $DIR
-cp MLO $DIR
-cp u-boot.img $DIR
-cp uEnv/uEnv.txt $DIR
+cp deploy/sd/* $DIR
+
+mkdir -p $DIR/emmc
+cp deploy/emmc/* $DIR/emmc
+
 sync
 
-MLO2=`md5sum $DIR/MLO`
-UBOOT2=`md5sum $DIR/u-boot.img`
+#MLO2=`md5sum $DIR/MLO`
+#UBOOT2=`md5sum $DIR/u-boot.img`
 
 umount $DIR
 
-echo "done"
-
-
+echo "Done install to $1"
