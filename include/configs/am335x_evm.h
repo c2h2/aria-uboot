@@ -47,6 +47,8 @@
 #define CONFIG_CMD_ASKENV
 #define CONFIG_VERSION_VARIABLE
 
+/*c2h2 change nandimgsize from 0x500000 to 0x270000, ie max allowed kernel size for nandboot is 2.5MiB*/
+
 /* set to negative value for no autoboot */
 #define CONFIG_BOOTDELAY		1
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
@@ -73,7 +75,7 @@
 	"nandroot=ubi0:rootfs rw ubi.mtd=7,2048\0" \
 	"nandrootfstype=ubifs rootwait=1\0" \
 	"nandsrcaddr=0x280000\0" \
-	"nandimgsize=0x500000\0" \
+	"nandimgsize=0x270000\0" \
 	"rootpath=/export/rootfs\0" \
 	"nfsopts=nolock\0" \
 	"static_ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}:${hostname}" \

@@ -546,7 +546,7 @@ int board_init(void)
 
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
 
-	Lcd_Init(); //make lcd work
+	//Lcd_Init(); //make lcd work
 
 	gpmc_init();
 
