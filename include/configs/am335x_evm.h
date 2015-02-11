@@ -26,9 +26,9 @@
 
 #define CONFIG_ENV_SIZE			(128 << 10)	/* 128 KiB */
 #define CONFIG_SYS_MALLOC_LEN		(1024 << 10)
-#define CONFIG_SYS_LONGHELP		/* undef to save memory */
+#undef  CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
-#define CONFIG_SYS_PROMPT		"U-Boot# "
+#define CONFIG_SYS_PROMPT		"AriaU> "
 #define CONFIG_BOARD_LATE_INIT
 #define CONFIG_SYS_NO_FLASH
 #define MACH_TYPE_TIAM335EVM		3589	/* Until the next sync */
@@ -50,7 +50,7 @@
 /*c2h2 change nandimgsize from 0x500000 to 0x270000, ie max allowed kernel size for nandboot is 2.5MiB*/
 
 /* set to negative value for no autoboot */
-#define CONFIG_BOOTDELAY		1
+#define CONFIG_BOOTDELAY		0
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #ifndef CONFIG_SPL_BUILD
@@ -516,5 +516,5 @@
 
 #endif	/* ! __CONFIG_AM335X_EVM_H */
 
-/* LCD Support */
-#define CONFIG_LCD_TCM  
+/* Disable LCD Support */
+/*#define CONFIG_LCD_TCM  */

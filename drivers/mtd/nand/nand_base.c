@@ -2525,6 +2525,8 @@ static int nand_flash_detect_onfi(struct mtd_info *mtd, struct nand_chip *chip,
 	int i;
 	int val;
 
+	return 1; //c2h2 disable nand
+
 	/* try ONFI for unknow chip or LP */
 	chip->cmdfunc(mtd, NAND_CMD_READID, 0x20, -1);
 	if (chip->read_byte(mtd) != 'O' || chip->read_byte(mtd) != 'N' ||
@@ -2607,6 +2609,9 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	u8 id_data[8];
 	int ret;
 
+	printk("Using eMMC, skip NAND Detect. ");
+	return ERR_PTR(-ENODEV);  //c2h2 disable
+
 	/* Select the device */
 	chip->select_chip(mtd, 0);
 
@@ -2623,7 +2628,7 @@ static const struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	*maf_id = chip->read_byte(mtd);
 	*dev_id = chip->read_byte(mtd);
 
-	printk(KERN_INFO "manu_id,dev_id = %02x,%02x", *maf_id, *dev_id);
+	printk(KERN_INFO "manu_id,dev_id = %02x,%02x\n", *maf_id, *dev_id);
 
 	/* Try again to make sure, as some systems the bus-hold or other
 	 * interface concerns can cause random data which looks like a
@@ -2953,7 +2958,7 @@ int nand_scan_tail(struct mtd_info *mtd)
 {
 	int i;
 	struct nand_chip *chip = mtd->priv;
-
+	
 	if (!(chip->options & NAND_OWN_BUFFERS))
 		chip->buffers = memalign(ARCH_DMA_MINALIGN,
 					 sizeof(*chip->buffers));
@@ -3216,11 +3221,12 @@ int nand_scan_tail(struct mtd_info *mtd)
 int nand_scan(struct mtd_info *mtd, int maxchips)
 {
 	int ret;
-
+	return -1; //c2h2 diable nand here
+/*
 	ret = nand_scan_ident(mtd, maxchips, NULL);
 	if (!ret)
 		ret = nand_scan_tail(mtd);
-	return ret;
+	return ret;*/
 }
 
 /**

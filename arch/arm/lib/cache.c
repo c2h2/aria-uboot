@@ -61,7 +61,8 @@ void	flush_dcache_all(void)
  */
 void __enable_caches(void)
 {
-	puts("WARNING: Caches not enabled\n");
+	//c2h2 disable printf, U-Boot is not using I-CACHE or D-CACHE, kernel will use.
+	//puts("WARNING: Caches not enabled\n");
 }
 void enable_caches(void)
 	__attribute__((weak, alias("__enable_caches")));

@@ -124,8 +124,7 @@ static int read_eeprom(void)
 		}
 
 		if (header.magic != 0xEE3355AA) {
-			printf("Incorrect magic number (0x%x) in EEPROM\n",
-					header.magic);
+			printf("Assuming Ariaboard. (0x%x) in EEPROM\n", header.magic);
 			return -EINVAL;
 		}
 	}
@@ -465,11 +464,9 @@ void s_init(void)
 	 * Disable it to avoid "random" resets
 	 */
 	writel(0xAAAA, &wdtimer->wdtwspr);
-	while (readl(&wdtimer->wdtwwps) != 0x0)
-		;
+	while (readl(&wdtimer->wdtwwps) != 0x0);
 	writel(0x5555, &wdtimer->wdtwspr);
-	while (readl(&wdtimer->wdtwwps) != 0x0)
-		;
+	while (readl(&wdtimer->wdtwwps) != 0x0);
 
 #ifdef CONFIG_SPL_BUILD
 	/* Setup the PLLs and the clocks for the peripherals */
@@ -540,9 +537,11 @@ void s_init(void)
  */
 int board_init(void)
 {
-	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
-	if (read_eeprom() < 0)
-		puts("Could not get board ID.\n");
+	//i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE); //already init somewhere above
+	
+	//c2h2 skip read EEPROM
+	//if (read_eeprom() < 0)
+	//	puts("Could not get board ID.\n");
 
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
 
@@ -614,15 +613,15 @@ static struct cpsw_platform_data cpsw_data = {
 };
 #endif
 
-#if defined(CONFIG_DRIVER_TI_CPSW) || \
-	(defined(CONFIG_USB_ETHER) && defined(CONFIG_MUSB_GADGET))
+#if defined(CONFIG_DRIVER_TI_CPSW) 
 int board_eth_init(bd_t *bis)
 {
 	int rv, n = 0;
+	/* //c2h2 temp disable ethaddr read
 	uint8_t mac_addr[6];
 	uint32_t mac_hi, mac_lo;
 
-	/* try reading mac address from efuse */
+	//  try reading mac address from efuse
 	mac_lo = readl(&cdev->macid0l);
 	mac_hi = readl(&cdev->macid0h);
 	mac_addr[0] = mac_hi & 0xFF;
@@ -632,25 +631,19 @@ int board_eth_init(bd_t *bis)
 	mac_addr[4] = mac_lo & 0xFF;
 	mac_addr[5] = (mac_lo & 0xFF00) >> 8;
 
-#if (defined(CONFIG_DRIVER_TI_CPSW) && !defined(CONFIG_SPL_BUILD)) || \
-	(defined(CONFIG_SPL_ETH_SUPPORT) && defined(CONFIG_SPL_BUILD))
 	if (!getenv("ethaddr")) {
 		printf("<ethaddr> not set. Validating first E-fuse MAC\n");
 
 		if (is_valid_ether_addr(mac_addr))
 			eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
+	*/
 
-	if (board_is_bone() || board_is_bone_lt() || board_is_idk() || board_is_aria() ) {
-    puts("c2h2: Aria board registering cpsw\n");
-		writel(MII_MODE_ENABLE, &cdev->miisel);
-		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
-				PHY_INTERFACE_MODE_MII;
-	} else {
-		writel(RGMII_MODE_ENABLE, &cdev->miisel);
-		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
-				PHY_INTERFACE_MODE_RGMII;
-	}
+	puts("Ariaboard registering cpsw.\n");
+	writel(MII_MODE_ENABLE, &cdev->miisel);
+	cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =	PHY_INTERFACE_MODE_MII;
+	//writel(RGMII_MODE_ENABLE, &cdev->miisel);
+	//cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =PHY_INTERFACE_MODE_RGMII;
 
 	rv = cpsw_register(&cpsw_data);
 	if (rv < 0)
@@ -658,39 +651,6 @@ int board_eth_init(bd_t *bis)
 	else
 		n += rv;
 
-	/*
-	 *
-	 * CPSW RGMII Internal Delay Mode is not supported in all PVT
-	 * operating points.  So we must set the TX clock delay feature
-	 * in the AR8051 PHY.  Since we only support a single ethernet
-	 * device in U-Boot, we only do this for the first instance.
-	 */
-#define AR8051_PHY_DEBUG_ADDR_REG	0x1d
-#define AR8051_PHY_DEBUG_DATA_REG	0x1e
-#define AR8051_DEBUG_RGMII_CLK_DLY_REG	0x5
-#define AR8051_RGMII_TX_CLK_DLY		0x100
-
-	if (board_is_evm_sk() || board_is_gp_evm()) {
-		const char *devname;
-		devname = miiphy_get_current_dev();
-
-		miiphy_write(devname, 0x0, AR8051_PHY_DEBUG_ADDR_REG,
-				AR8051_DEBUG_RGMII_CLK_DLY_REG);
-		miiphy_write(devname, 0x0, AR8051_PHY_DEBUG_DATA_REG,
-				AR8051_RGMII_TX_CLK_DLY);
-	}
-#endif
-#if defined(CONFIG_USB_ETHER) && \
-	(!defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_USBETH_SUPPORT))
-	if (is_valid_ether_addr(mac_addr))
-		eth_setenv_enetaddr("usbnet_devaddr", mac_addr);
-
-	rv = usb_eth_initialize(bis);
-	if (rv < 0)
-		printf("Error %d registering USB_ETHER\n", rv);
-	else
-		n += rv;
-#endif
 	return n;
 }
 #endif

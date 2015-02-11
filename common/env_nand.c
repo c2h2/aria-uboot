@@ -264,6 +264,7 @@ int saveenv(void)
 
 int readenv(size_t offset, u_char *buf)
 {
+	return -1; //c2h2 disabel read action.
 	size_t end = offset + CONFIG_ENV_RANGE;
 	size_t amount_loaded = 0;
 	size_t blocksize, len;
@@ -397,6 +398,8 @@ done:
  */
 void env_relocate_spec(void)
 {
+	set_default_env("!Aria has no NAND");
+	return; //c2h2 skip readenv()
 #if !defined(ENV_IS_EMBEDDED)
 	int ret;
 	ALLOC_CACHE_ALIGN_BUFFER(char, buf, CONFIG_ENV_SIZE);

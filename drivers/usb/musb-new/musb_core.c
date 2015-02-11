@@ -1406,6 +1406,7 @@ enum { MUSB_CONTROLLER_MHDRC, MUSB_CONTROLLER_HDRC, };
  */
 static int __devinit musb_core_init(u16 musb_type, struct musb *musb)
 {
+	return 0; //disable by c2h2
 	u8 reg;
 	char *type;
 	char aInfo[90], aRevision[32], aDate[12];
@@ -1933,6 +1934,7 @@ musb_init_controller(struct musb_hdrc_platform_data *plat, struct device *dev,
 #else
 	int nIrq = 0;
 #endif
+	return 0; //c2h2 disable usb
 
 	/* The driver might handle more features than the board; OK.
 	 * Fail when the board needs a feature that's not enabled.

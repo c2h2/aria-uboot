@@ -693,6 +693,8 @@ int board_nand_init(struct nand_chip *nand)
 {
 	int32_t gpmc_config = 0;
 	cs = 0;
+	
+	return -ENODEV; //c2h2 disable NAND
 
 	/*
 	 * xloader/Uboot's gpmc configuration would have configured GPMC for
