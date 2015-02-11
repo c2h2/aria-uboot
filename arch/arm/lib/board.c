@@ -590,12 +590,12 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #endif
 
 #if defined(CONFIG_CMD_NAND)
-	puts("NAND:  ");
-	nand_init();		/* go init the NAND */
+	//puts("NAND:  ");
+	//nand_init();		/* go init the NAND */
 #endif
 
 #if defined(CONFIG_CMD_ONENAND)
-	onenand_init();
+	//onenand_init();
 #endif
 
 #ifdef CONFIG_GENERIC_MMC
@@ -615,7 +615,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 		set_default_env(NULL);
 
 #if defined(CONFIG_CMD_PCI) || defined(CONFIG_PCI)
-	arm_pci_init();
+	//arm_pci_init();
 #endif
 
 	stdio_init();	/* get the devices list going. */
@@ -663,8 +663,8 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	bb_miiphy_init();
 #endif
 #if defined(CONFIG_CMD_NET)
-	puts("Net:   ");
-	eth_initialize(gd->bd);
+	//puts("Net:   ");
+	//eth_initialize(gd->bd);
 #if defined(CONFIG_RESET_PHY_R)
 	debug("Reset Ethernet PHY\n");
 	reset_phy();

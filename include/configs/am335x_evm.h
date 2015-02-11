@@ -29,7 +29,7 @@
 #undef  CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
 #define CONFIG_SYS_PROMPT		"AriaU> "
-#define CONFIG_BOARD_LATE_INIT
+#undef CONFIG_BOARD_LATE_INIT
 #define CONFIG_SYS_NO_FLASH
 #define MACH_TYPE_TIAM335EVM		3589	/* Until the next sync */
 #define CONFIG_MACH_TYPE		MACH_TYPE_TIAM335EVM
