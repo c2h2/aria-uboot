@@ -21,10 +21,11 @@
 #include <asm/arch/cpu.h>
 #include <asm/arch/hardware.h>
 
+
 #define CONFIG_DMA_COHERENT
 #define CONFIG_DMA_COHERENT_SIZE	(1 << 20)
 
-#define CONFIG_ENV_SIZE			(128 << 10)	/* 128 KiB */
+#define CONFIG_ENV_SIZE			(16 << 10)	/* 16 KiB */
 #define CONFIG_SYS_MALLOC_LEN		(1024 << 10)
 #undef  CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
@@ -64,11 +65,6 @@
 	"fdtfile=\0" \
 	"console=ttyO0,115200n8\0" \
 	"optargs=\0" \
-	"mtdids=" MTDIDS_DEFAULT "\0" \
-	"mtdparts=" MTDPARTS_DEFAULT "\0" \
-	"dfu_alt_info_mmc=" DFU_ALT_INFO_MMC "\0" \
-	"dfu_alt_info_emmc=rawemmc mmc 0 3751936\0" \
-	"dfu_alt_info_nand=" DFU_ALT_INFO_NAND "\0" \
 	"mmcdev=1\0" \
 	"mmcroot=/dev/mmcblk0p2 ro\0" \
 	"mmcrootfstype=ext4 rootwait\0" \
@@ -233,29 +229,32 @@
 #define CONFIG_CMD_MMC
 #define CONFIG_DOS_PARTITION
 #define CONFIG_CMD_FAT
-#define CONFIG_FAT_WRITE
+/*#define CONFIG_FAT_WRITE
 #define CONFIG_CMD_EXT2
-
-#define CONFIG_SPI
+*/
+/*#define CONFIG_SPI
 #define CONFIG_OMAP3_SPI
 #define CONFIG_MTD_DEVICE
 #define CONFIG_SPI_FLASH
 #define CONFIG_SPI_FLASH_WINBOND
 #define CONFIG_CMD_SF
 #define CONFIG_SF_DEFAULT_SPEED		(24000000)
+*/
 
 /* USB Composite download gadget - g_dnl */
+/*
 #define CONFIG_USB_GADGET
 #define CONFIG_USBDOWNLOAD_GADGET
-
+*/
 /* USB TI's IDs */
-#define CONFIG_USBD_HS
+/*#define CONFIG_USBD_HS
 #define CONFIG_G_DNL_VENDOR_NUM 0x0403
 #define CONFIG_G_DNL_PRODUCT_NUM 0xBD00
 #define CONFIG_G_DNL_MANUFACTURER "Texas Instruments"
+*/
 
 /* USB Device Firmware Update support */
-#define CONFIG_DFU_FUNCTION
+/*#define CONFIG_DFU_FUNCTION
 #define CONFIG_DFU_MMC
 #define CONFIG_DFU_NAND
 #define CONFIG_CMD_DFU
@@ -275,7 +274,7 @@
 	"u-boot part 0 5;" \
 	"kernel part 0 7;" \
 	"rootfs part 0 8"
-
+*/
  /* Physical Memory Map */
 #define CONFIG_NR_DRAM_BANKS		1		/*  1 bank of DRAM */
 #define PHYS_DRAM_1			0x80000000	/* DRAM Bank #1 */
@@ -310,12 +309,12 @@
 #define CONFIG_SYS_I2C_SLAVE		1
 #define CONFIG_I2C_MULTI_BUS
 #define CONFIG_DRIVER_OMAP24XX_I2C
-#define CONFIG_CMD_EEPROM
+/*#define CONFIG_CMD_EEPROM
 #define CONFIG_ENV_EEPROM_IS_ON_I2C
-#define CONFIG_SYS_I2C_EEPROM_ADDR	0x50	/* Main EEPROM */
+#define CONFIG_SYS_I2C_EEPROM_ADDR	0x50	
 #define CONFIG_SYS_I2C_EEPROM_ADDR_LEN	2
 #define CONFIG_SYS_I2C_MULTI_EEPROMS
-
+*/
 #define CONFIG_OMAP_GPIO
 
 #define CONFIG_BAUDRATE		115200
@@ -335,10 +334,10 @@
 #define CONFIG_SPL_STACK		CONFIG_SYS_INIT_SP_ADDR
 
 #define CONFIG_SPL_BSS_START_ADDR	0x80000000
-#define CONFIG_SPL_BSS_MAX_SIZE		0x80000		/* 512 KB */
+#define CONFIG_SPL_BSS_MAX_SIZE		0x80000	
 
-#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR	0x300 /* address 0x60000 */
-#define CONFIG_SYS_U_BOOT_MAX_SIZE_SECTORS	0x200 /* 256 KB */
+#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR	0x300  
+#define CONFIG_SYS_U_BOOT_MAX_SIZE_SECTORS	0x200 
 #define CONFIG_SYS_MMC_SD_FAT_BOOT_PARTITION	1
 #define CONFIG_SPL_FAT_LOAD_PAYLOAD_NAME	"u-boot.img"
 #define CONFIG_SPL_MMC_SUPPORT
@@ -350,22 +349,24 @@
 #define CONFIG_SPL_LIBGENERIC_SUPPORT
 #define CONFIG_SPL_SERIAL_SUPPORT
 #define CONFIG_SPL_GPIO_SUPPORT
-#define CONFIG_SPL_YMODEM_SUPPORT
+
+/*#define CONFIG_SPL_YMODEM_SUPPORT
 #define CONFIG_SPL_NET_SUPPORT
-#define CONFIG_SPL_NET_VCI_STRING	"AM335x U-Boot SPL"
+#define CONFIG_SPL_NET_VCI_STRING	"AM335x U-Boot SPL" 
 #define CONFIG_SPL_ETH_SUPPORT
 #define CONFIG_SPL_SPI_SUPPORT
 #define CONFIG_SPL_SPI_FLASH_SUPPORT
 #define CONFIG_SPL_SPI_LOAD
 #define CONFIG_SPL_SPI_BUS		0
 #define CONFIG_SPL_SPI_CS		0
-#define CONFIG_SYS_SPI_U_BOOT_OFFS	0x80000
-#define CONFIG_SPL_MUSB_NEW_SUPPORT
+#define CONFIG_SYS_SPI_U_BOOT_OFFS	0x80000 */
+/*#define CONFIG_SPL_MUSB_NEW_SUPPORT*/
 #define CONFIG_SPL_LDSCRIPT		"$(CPUDIR)/omap-common/u-boot-spl.lds"
 
 #define CONFIG_SPL_BOARD_INIT
+/*
 #define CONFIG_SPL_NAND_AM33XX_BCH
-#define CONFIG_SPL_NAND_SUPPORT
+#define CONFIG_SPL_NAND_SUPPORT 
 #define CONFIG_SPL_NAND_BASE
 #define CONFIG_SPL_NAND_DRIVERS
 #define CONFIG_SPL_NAND_ECC
@@ -394,7 +395,7 @@
 #define	CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_TEXT_BASE
 
 #define CONFIG_SYS_NAND_U_BOOT_OFFS	0x80000
-
+*/
 /*
  * 1MB into the SDRAM to allow for SPL's bss at the beginning of SDRAM
  * 64 bytes before this address should be set aside for u-boot.img's
@@ -414,7 +415,6 @@
 
 /*
  * USB configuration
- */
 #define CONFIG_USB_MUSB_DSPS
 #define CONFIG_ARCH_MISC_INIT
 #define CONFIG_MUSB_GADGET
@@ -426,6 +426,8 @@
 #define CONFIG_AM335X_USB0_MODE	MUSB_PERIPHERAL
 #define CONFIG_AM335X_USB1
 #define CONFIG_AM335X_USB1_MODE MUSB_HOST
+
+ */
 
 #ifdef CONFIG_MUSB_HOST
 #define CONFIG_CMD_USB
@@ -469,9 +471,11 @@
 
 /* Unsupported features */
 #undef CONFIG_USE_IRQ
-
-#define CONFIG_CMD_NET
-#define CONFIG_CMD_DHCP
+#undef CONFIG_CMD_NET
+#undef CONFIG_CMD_NFS
+#undef CONFIG_CMD_DHCP
+#undef CONFIG_CMD_PING
+/*
 #define CONFIG_CMD_PING
 #define CONFIG_DRIVER_TI_CPSW
 #define CONFIG_MII
@@ -487,8 +491,10 @@
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_ADDR			0
 #define CONFIG_PHY_SMSC
-
+*/
+/*
 #define CONFIG_NAND
+*/
 /* NAND support */
 #ifdef CONFIG_NAND
 #define CONFIG_CMD_NAND
@@ -518,3 +524,5 @@
 
 /* Disable LCD Support */
 /*#define CONFIG_LCD_TCM  */
+
+#undef CONFIG_LCD_TCM

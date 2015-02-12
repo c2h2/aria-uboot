@@ -56,18 +56,18 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	}
 
 #ifdef CONFIG_TRATS
-	board_usb_init();
+	//board_usb_init();
 #endif
 
-	g_dnl_register(s);
+	/*g_dnl_register(s);
 	while (1) {
 		if (ctrlc())
 			goto exit;
 
 		usb_gadget_handle_interrupts();
-	}
+	}*/
 exit:
-	g_dnl_unregister();
+	//g_dnl_unregister();
 done:
 	dfu_free_entities();
 	free(env_bkp);

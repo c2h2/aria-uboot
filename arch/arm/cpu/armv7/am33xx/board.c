@@ -71,8 +71,9 @@ void setup_clocks_for_console(void)
 }
 
 /* AM33XX has two MUSB controllers which can be host or gadget */
-#if (defined(CONFIG_MUSB_GADGET) || defined(CONFIG_MUSB_HOST)) && \
-	(defined(CONFIG_AM335X_USB0) || defined(CONFIG_AM335X_USB1))
+#if 0 
+
+//(defined(CONFIG_MUSB_GADGET) || defined(CONFIG_MUSB_HOST)) &&	(defined(CONFIG_AM335X_USB0) || defined(CONFIG_AM335X_USB1))
 static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
 
 /* USB 2.0 PHY Control */
@@ -139,13 +140,5 @@ static struct musb_hdrc_platform_data otg1_plat = {
 
 int arch_misc_init(void)
 {
-#ifdef CONFIG_AM335X_USB0
-	musb_register(&otg0_plat, &otg0_board_data,
-		(void *)AM335X_USB0_OTG_BASE);
-#endif
-#ifdef CONFIG_AM335X_USB1
-	musb_register(&otg1_plat, &otg1_board_data,
-		(void *)AM335X_USB1_OTG_BASE);
-#endif
 	return 0;
 }
