@@ -49,7 +49,8 @@ static struct uart_sys *uart_base = (struct uart_sys *)DEFAULT_UART_BASE;
 #define RGMII_MODE_ENABLE	0x3A
 
 /* GPIO that controls power to DDR on EVM-SK */
-#define GPIO_DDR_VTT_EN		7
+#define GPIO_ARIA_PHY		7
+#define GPIO_ARIA_SOUND		32*3 + 8
 
 static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
 
@@ -408,8 +409,8 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(1000);
-	puts("CPU:  1000MHz\n");
+	mpu_pll_config(800);
+	puts("CPU:  800MHz\n");
 	return;
 
 }
@@ -457,6 +458,8 @@ void s_init(void)
 	enable_uart5_pin_mux();
 #endif /* CONFIG_SERIAL6 */
 
+	enable_aria_sound_pin_mux();
+
 	regVal = readl(&uart_base->uartsyscfg);
 	regVal |= UART_RESET;
 	writel(regVal, &uart_base->uartsyscfg);
@@ -473,17 +476,25 @@ void s_init(void)
 
 	preloader_console_init();
 
+	/*for Ariaboad version A8 or later, sound and net reset pins are controlled by gpio that connected to CPU
+	we need to pull down RESET pin for 50ms */
+        gpio_request(GPIO_ARIA_SOUND, "emu1");
+	gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
+        //gpio_direction_output(GPIO_ARIA_SOUND, 1);
+	//udelay(10000);
+	
+	gpio_direction_output(GPIO_ARIA_PHY, 0);
+        gpio_direction_output(GPIO_ARIA_SOUND, 0);
+	udelay(50000);
+
+        gpio_direction_output(GPIO_ARIA_SOUND, 1);
+        gpio_direction_output(GPIO_ARIA_PHY, 1);
+
 	/* Initalize the board header */
 	enable_i2c0_pin_mux();
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 
 	enable_board_pin_mux(&header);
-	/*
-	* EVM SK 1.2A and later use gpio0_7 to enable DDR3.
-	* This is safe enough to do on older revs.
-	*/
-	gpio_request(GPIO_DDR_VTT_EN, "ddr_vtt_en");
-	gpio_direction_output(GPIO_DDR_VTT_EN, 1);
  
 	/* c2h2 setting ddr3 */ 
 	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
