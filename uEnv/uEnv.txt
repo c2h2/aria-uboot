@@ -2,7 +2,7 @@ kernel_file=uImage
 
 console=ttyO0,115200n8
 
-mmcroot=/dev/mmcblk0p2 rw
+mmcroot=/dev/mmcblk0p2 ro
 mmcrootfstype=ext4 rootwait fixrtc
 
 boot_fstype=fat
