@@ -159,10 +159,10 @@ int tps65217_reg_write(uchar prot_level, uchar dest_reg,
 
 int tps65217_voltage_update(unsigned char dc_cntrl_reg, unsigned char volt_sel)
 {
-        if ((dc_cntrl_reg != DEFDCDC1) && (dc_cntrl_reg != DEFDCDC2)
-                && (dc_cntrl_reg != DEFDCDC3))
+/*
+        if ((dc_cntrl_reg != DEFDCDC1) && (dc_cntrl_reg != DEFDCDC2)&& (dc_cntrl_reg != DEFDCDC3))
                 return 1;
-
+*/
         /* set voltage level */
         if (tps65217_reg_write(PROT_LEVEL_2, dc_cntrl_reg, volt_sel, MASK_ALL_BITS))
                 return 1;
@@ -398,10 +398,17 @@ void am33xx_spl_board_init(void)
 #endif
 	/* Set DCDC2 (MPU) voltage to 1.275V */
 	//if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
-	if (tps65217_voltage_update(DEFDCDC2, 0x13)) {
-		printf("tps65217_voltage_update failure\n");
+	if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
+		printf("tps65217_voltage_updatei(DCDC2) failure\n");
 		return;
 	}
+
+ 	/* DDR3 Voltage , for 1.35v */
+        if (tps65217_voltage_update(DEFDCDC1, 0x11)) {
+                printf("tps65217_voltage_update(DCDC1) failure\n");
+                return;
+        }
+
 #if 0
 	/* Set LDO3, LDO4 output voltage to 3.3V */
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS1, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
