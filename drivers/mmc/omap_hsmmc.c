@@ -39,7 +39,7 @@
 #define SYSCTL_SRD	(1 << 26)
 
 /* If we fail after 1 second wait, something is really bad */
-#define MAX_RETRY_MS	1000
+#define MAX_RETRY_MS	70
 
 static int mmc_read_data(struct hsmmc *mmc_base, char *buf, unsigned int size);
 static int mmc_write_data(struct hsmmc *mmc_base, const char *buf,
@@ -257,6 +257,7 @@ static void mmc_reset_controller_fsm(struct hsmmc *mmc_base, u32 bit)
 static int mmc_send_cmd(struct mmc *mmc, struct mmc_cmd *cmd,
 			struct mmc_data *data)
 {
+	
 	struct hsmmc *mmc_base = (struct hsmmc *)mmc->priv;
 	unsigned int flags, mmc_stat;
 	ulong start;
@@ -294,7 +295,7 @@ static int mmc_send_cmd(struct mmc *mmc, struct mmc_cmd *cmd,
 	 * retry not supported by mmc.c(core file)
 	 */
 	if (cmd->cmdidx == SD_CMD_APP_SEND_SCR)
-		udelay(50000); /* wait 50 ms */
+		udelay(35000); /* wait 35 ms */
 
 	if (!(cmd->resp_type & MMC_RSP_PRESENT))
 		flags = 0;
@@ -570,7 +571,8 @@ int omap_mmc_init(int dev_index, uint host_caps_mask, uint f_max)
 				MMC_MODE_HC) & ~host_caps_mask;
 
 	mmc->f_min = 400000;
-
+	mmc->f_max = 52000000;
+	/*
 	if (f_max != 0)
 		mmc->f_max = f_max;
 	else {
@@ -582,7 +584,7 @@ int omap_mmc_init(int dev_index, uint host_caps_mask, uint f_max)
 		} else
 			mmc->f_max = 20000000;
 	}
-
+	*/
 	mmc->b_max = 0;
 
 #if defined(CONFIG_OMAP34XX)
