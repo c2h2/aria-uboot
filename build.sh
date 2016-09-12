@@ -12,13 +12,13 @@ make clean
 make -j${CORES} am335x_evm
 
 mkdir -p deploy/sd
-mv MLO deploy/sd
-mv u-boot.img deploy/sd
+cp MLO deploy/sd
+cp u-boot.img deploy/sd
 cp uEnv/uEnv.txt deploy/sd
 
 mkdir -p deploy/emmc
-mv MLO deploy/emmc
-mv u-boot.img deploy/emmc
+cp MLO deploy/emmc
+cp u-boot.img deploy/emmc
 cp uEnv/uEnv.txt deploy/emmc
 
 
