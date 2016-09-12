@@ -51,7 +51,7 @@
 /*c2h2 change nandimgsize from 0x500000 to 0x270000, ie max allowed kernel size for nandboot is 2.5MiB*/
 
 /* set to negative value for no autoboot */
-#define CONFIG_BOOTDELAY		3
+#define CONFIG_BOOTDELAY		0
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #ifndef CONFIG_SPL_BUILD
