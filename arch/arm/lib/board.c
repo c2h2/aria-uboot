@@ -240,6 +240,36 @@ static int mark_bootstage(void)
 	return 0;
 }
 
+#ifdef CONFIG_AM33XX
+static int am33xx_boot_mode_detect(void)
+{
+	u32 bootMode = 0;
+	phys_addr_t bootModePhyAddr = 0x44E10040;
+	u8 *bootModePtr;
+
+	bootModePtr = map_physmem(bootModePhyAddr, 1, 0);
+	if((*bootModePtr & 0xF)==0xC)
+	{
+		bootMode = 1;
+	}
+
+	if(bootMode)
+	{
+		puts("Boot from eMMC!\n");
+		setenv("mmcdev", "1");
+		setenv("mmcrootfs", "/dev/mmcblk0p2");
+	}
+	else
+	{
+		puts("Boot from SD!\n");
+		setenv("mmcdev", "0");
+		setenv("mmcrootfs", "/dev/mmcblk1p2");
+	}
+
+	return 0;
+}
+#endif
+
 init_fnc_t *init_sequence[] = {
 	arch_cpu_init,		/* basic arch cpu dependent setup */
 	mark_bootstage,
@@ -696,6 +726,10 @@ void board_init_r(gd_t *id, ulong dest_addr)
 		sprintf((char *)memsz, "%ldk", (gd->ram_size / 1024) - pram);
 		setenv("mem", (char *)memsz);
 	}
+#endif
+
+#ifdef CONFIG_AM33XX
+	am33xx_boot_mode_detect();
 #endif
 
 	/* main_loop() can return to retry autoboot, if so just run it again. */
