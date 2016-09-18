@@ -278,6 +278,16 @@ static const struct ddr_data ddr3_beagleblack_data = {
  .datadldiff0 = PHY_DLL_LOCK_DIFF, 
 };
 
+
+static const struct ddr_data k4b2g1646_ddr3_data = {
+ .datardsratio0 = K4B2G1646EBIH9_RD_DQS,
+ .datawdsratio0 = K4B2G1646EBIH9_WR_DQS,
+ .datafwsratio0 = K4B2G1646EBIH9_PHY_FIFO_WE,
+ .datawrsratio0 = K4B2G1646EBIH9_PHY_WR_DATA,
+ .datadldiff0 = PHY_DLL_LOCK_DIFF,
+};
+
+
 static const struct cmd_control ddr3_beagleblack_cmd_ctrl_data = { 
  .cmd0csratio = MT41K256M16HA125E_RATIO, 
  .cmd0dldiff = MT41K256M16HA125E_DLL_LOCK_DIFF, 
@@ -391,25 +401,47 @@ static struct emif_regs ddr3_evm_emif_reg_data = {
 	.emif_ddr_phy_ctlr_1 = MT41J512M8RH125_EMIF_READ_LATENCY,
 };
 
+static struct emif_regs k4b2g1646_emif_reg_data = {
+	.sdram_config = K4B2G1646EBIH9_EMIF_SDCFG, 
+	.ref_ctrl = K4B2G1646EBIH9_EMIF_SDREF, 
+	.sdram_tim1 = K4B2G1646EBIH9_EMIF_TIM1, 
+	.sdram_tim2 = K4B2G1646EBIH9_EMIF_TIM2, 
+	.sdram_tim3 = K4B2G1646EBIH9_EMIF_TIM3, 
+	.zq_config = K4B2G1646EBIH9_ZQ_CFG, 
+	.emif_ddr_phy_ctlr_1 = K4B2G1646EBIH9_EMIF_READ_LATENCY,
+};
+
+static struct cmd_control k4b2g1646_cmd_ctrl_data ={
+	.cmd0csratio = K4B2G1646EBIH9_RATIO,
+        .cmd0dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd0iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+
+        .cmd1csratio = K4B2G1646EBIH9_RATIO,
+        .cmd1dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd1iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+
+        .cmd2csratio = K4B2G1646EBIH9_RATIO,
+        .cmd2dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd2iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+};
+
 void am33xx_spl_board_init(void)
 {
 #if 0
 	if (tps65217_reg_write(PROT_LEVEL_NONE, POWER_PATH, USB_INPUT_CUR_LIMIT_1300MA, USB_INPUT_CUR_LIMIT_MASK)) printf("tps65217_reg_write failure\n");
 #endif
+#ifdef TPS65217_ENABLE
 	/* Set DCDC2 (MPU) voltage to 1.275V */
 	//if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
 	if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
 		printf("tps65217_voltage_updatei(DCDC2) failure\n");
-		return;
 	}
 
  	/* DDR3 Voltage , for 1.35v */
         if (tps65217_voltage_update(DEFDCDC1, 0x11)) {
                 printf("tps65217_voltage_update(DCDC1) failure\n");
-                return;
         }
 
-#if 0
 	/* Set LDO3, LDO4 output voltage to 3.3V */
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS1, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 
@@ -449,21 +481,6 @@ void s_init(void)
 #ifdef CONFIG_SERIAL1
 	enable_uart0_pin_mux();
 #endif /* CONFIG_SERIAL1 */
-#ifdef CONFIG_SERIAL2
-	enable_uart1_pin_mux();
-#endif /* CONFIG_SERIAL2 */
-#ifdef CONFIG_SERIAL3
-	enable_uart2_pin_mux();
-#endif /* CONFIG_SERIAL3 */
-#ifdef CONFIG_SERIAL4
-	enable_uart3_pin_mux();
-#endif /* CONFIG_SERIAL4 */
-#ifdef CONFIG_SERIAL5
-	enable_uart4_pin_mux();
-#endif /* CONFIG_SERIAL5 */
-#ifdef CONFIG_SERIAL6
-	enable_uart5_pin_mux();
-#endif /* CONFIG_SERIAL6 */
 
 	enable_aria_sound_pin_mux();
 
@@ -492,19 +509,20 @@ void s_init(void)
 	
 	gpio_direction_output(GPIO_ARIA_PHY, 0);
         gpio_direction_output(GPIO_ARIA_SOUND, 0);
-	udelay(50000);
+	udelay(30000);
 
         gpio_direction_output(GPIO_ARIA_SOUND, 1);
         gpio_direction_output(GPIO_ARIA_PHY, 1);
-
-	/* Initalize the board header */
+#ifdef TPS65217_ENABLE
 	enable_i2c0_pin_mux();
 	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
+#endif
 
+	/* Initalize the board header */
 	enable_board_pin_mux(&header);
- 
 	/* c2h2 setting ddr3 */ 
-	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+//	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+	config_ddr(400, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,  &k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
 	puts("DDR3: 800MHz\n");
 #endif
 }
@@ -524,7 +542,7 @@ int board_init(void)
 
 	//Lcd_Init(); //make lcd work
 
-	gpmc_init();
+	//gpmc_init(); //no nand
 
 	return 0;
 }
