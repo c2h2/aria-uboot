@@ -2,7 +2,7 @@ kernel_file=uImage
 
 console=ttyO0,115200n8
 
-mmcroot=/dev/mmcblk0p2 ro
+mmcrootargs=ro
 mmcrootfstype=ext4 rootwait fixrtc
 
 boot_fstype=fat
@@ -14,7 +14,7 @@ xyz_mmcboot=run xyz_load_image; run xyz_load_initrd; run xyz_load_dtb; echo Boot
 
 video_args=setenv video 
 device_args=run video_args; run expansion_args; run mmcargs
-mmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${mmcroot} rootfstype=${mmcrootfstype} ${expansion}
+mmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${mmcrootfs} ${mmcrootargs} rootfstype=${mmcrootfstype} ${expansion}
 
 optargs=
 expansion_args=setenv expansion ip=${ip_method}
