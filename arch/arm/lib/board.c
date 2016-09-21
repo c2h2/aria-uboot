@@ -248,6 +248,7 @@ static int am33xx_boot_mode_detect(void)
 	u8 *bootModePtr;
 
 	bootModePtr = map_physmem(bootModePhyAddr, 1, 0);
+	setenv_ulong("bootmodereg", (u32)(*bootModePtr));
 	if((*bootModePtr & 0xF)==0xC)
 	{
 		bootMode = 1;
