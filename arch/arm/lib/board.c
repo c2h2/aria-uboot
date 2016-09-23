@@ -259,12 +259,14 @@ static int am33xx_boot_mode_detect(void)
 		puts("Boot from eMMC!\n");
 		setenv("mmcdev", "1");
 		setenv("mmcrootfs", "/dev/mmcblk0p2");
+		setenv("mmcrescuefs", "/dev/mmcblk0p3");
 	}
 	else
 	{
 		puts("Boot from SD!\n");
 		setenv("mmcdev", "0");
 		setenv("mmcrootfs", "/dev/mmcblk1p2");
+		setenv("mmcrescuefs", "/dev/mmcblk1p3");
 	}
 
 	return 0;
