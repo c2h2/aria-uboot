@@ -57,9 +57,11 @@ void spl_board_init(void)
 #endif
 #ifdef CONFIG_AM33XX
 	am33xx_spl_board_init();
+	puts("BOARD INIT OK!\n");
 #endif
 #if defined(CONFIG_AM33XX) && defined(CONFIG_SPL_MUSB_NEW_SUPPORT)
 	arch_misc_init();
+	puts("MISC INIT OK!\n");
 #endif
 }
 
