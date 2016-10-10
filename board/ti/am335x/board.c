@@ -278,6 +278,14 @@ static const struct ddr_data ddr3_beagleblack_data = {
  .datadldiff0 = PHY_DLL_LOCK_DIFF, 
 };
 
+static const struct ddr_data k4b2g1646_ddr3_data = {
+ .datardsratio0 = K4B2G1646EBIH9_RD_DQS,
+ .datawdsratio0 = K4B2G1646EBIH9_WR_DQS,
+ .datafwsratio0 = K4B2G1646EBIH9_PHY_FIFO_WE,
+ .datawrsratio0 = K4B2G1646EBIH9_PHY_WR_DATA,
+ .datadldiff0 = PHY_DLL_LOCK_DIFF,
+};
+
 static const struct cmd_control ddr3_beagleblack_cmd_ctrl_data = { 
  .cmd0csratio = MT41K256M16HA125E_RATIO, 
  .cmd0dldiff = MT41K256M16HA125E_DLL_LOCK_DIFF, 
@@ -316,6 +324,29 @@ static struct emif_regs ddr3_beagleblack_emif_reg_data = {
  .emif_ddr_phy_ctlr_1 = MT41K256M16HA125E_EMIF_READ_LATENCY, 
 }; 
  
+static struct emif_regs k4b2g1646_emif_reg_data = {
+	.sdram_config = K4B2G1646EBIH9_EMIF_SDCFG, 
+	.ref_ctrl = K4B2G1646EBIH9_EMIF_SDREF, 
+	.sdram_tim1 = K4B2G1646EBIH9_EMIF_TIM1, 
+	.sdram_tim2 = K4B2G1646EBIH9_EMIF_TIM2, 
+	.sdram_tim3 = K4B2G1646EBIH9_EMIF_TIM3, 
+	.zq_config = K4B2G1646EBIH9_ZQ_CFG, 
+	.emif_ddr_phy_ctlr_1 = K4B2G1646EBIH9_EMIF_READ_LATENCY,
+};
+
+static struct cmd_control k4b2g1646_cmd_ctrl_data ={
+	.cmd0csratio = K4B2G1646EBIH9_RATIO,
+        .cmd0dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd0iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+
+        .cmd1csratio = K4B2G1646EBIH9_RATIO,
+        .cmd1dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd1iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+
+        .cmd2csratio = K4B2G1646EBIH9_RATIO,
+        .cmd2dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
+        .cmd2iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
+};
 
 static const struct emif_regs ddr2_emif_reg_data = {
 	.sdram_config = MT47H128M16RT25E_EMIF_SDCFG,
@@ -504,8 +535,17 @@ void s_init(void)
 	enable_board_pin_mux(&header);
  
 	/* c2h2 setting ddr3 */ 
-	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,  &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data); 
+	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,
+		&ddr3_beagleblack_cmd_ctrl_data,
+		&ddr3_beagleblack_emif_reg_data);
 	puts("DDR3: 800MHz\n");
+
+#if 0
+	config_ddr(303, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,
+		&k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
+	puts("DDR3: 400MHz\n");
+#endif
+
 #endif
 }
 
