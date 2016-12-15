@@ -449,7 +449,7 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(820);
+	mpu_pll_config(810);
 	puts("CPU:  800MHz\n");
 	return;
 
@@ -538,7 +538,7 @@ void s_init(void)
         gpio_direction_output(GPIO_ARIA_SOUND, 1);
  
 	/* c2h2 setting ddr3 */ 
-	config_ddr(420, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
+	config_ddr(410, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
 	puts("DDR3: 800MHz\n");
 
 #if 0
