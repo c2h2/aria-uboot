@@ -324,55 +324,6 @@ static unsigned short detect_daughter_board_profile(void)
 
 void enable_board_pin_mux(struct am335x_baseboard_id *header)
 {
-	/* Do board-specific muxes. */
-	if (!strncmp(header->name, "A335BONE", HDR_NAME_LEN)) {
-		/* Beaglebone pinmux */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
-		configure_module_pin_mux(mmc1_pin_mux);
-	} else if (!strncmp(header->config, "SKU#01", 6)) {
-		/* General Purpose EVM */
-		unsigned short profile = detect_daughter_board_profile();
-		configure_module_pin_mux(rgmii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
-		/* In profile #2 i2c1 and spi0 conflict. */
-		if (profile & ~PROFILE_2)
-			configure_module_pin_mux(i2c1_pin_mux);
-		/* Profiles 2 & 3 don't have NAND */
-		if (profile & ~(PROFILE_2 | PROFILE_3))
-			configure_module_pin_mux(nand_pin_mux);
-		else if (profile == PROFILE_2) {
-			configure_module_pin_mux(mmc1_pin_mux);
-			configure_module_pin_mux(spi0_pin_mux);
-		}
-	} else if (!strncmp(header->config, "SKU#02", 6)) {
-		/*
-		 * Industrial Motor Control (IDK)
-		 * note: IDK console is on UART3 by default.
-		 *       So u-boot mus be build with CONFIG_SERIAL4 and
-		 *       CONFIG_CONS_INDEX=4
-		 */
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_no_cd_pin_mux);
-	} else if (!strncmp(header->name, "A335X_SK", HDR_NAME_LEN)) {
-		/* Starter Kit EVM */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(gpio0_7_pin_mux);
-		configure_module_pin_mux(rgmii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux_sk_evm);
-	} else if (!strncmp(header->name, "A335BNLT", HDR_NAME_LEN)) {
-		/* Beaglebone LT pinmux */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
-		configure_module_pin_mux(mmc1_pin_mux);
-	} else {
-		//configure_module_pin_mux(mii1_pin_mux);
-		//configure_module_pin_mux(nand_pin_mux);
-		//configure_module_pin_mux(mmc1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux_sk_evm);
-	//	hang();
-	}
+	configure_module_pin_mux(mmc0_pin_mux_sk_evm);
 
 }

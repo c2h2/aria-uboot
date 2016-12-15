@@ -301,7 +301,7 @@ init_fnc_t *init_sequence[] = {
 	checkboard,		/* display board info */
 #endif
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
-	init_func_i2c,
+	//init_func_i2c,
 #endif
 	dram_init,		/* configure available RAM banks */
 	NULL,

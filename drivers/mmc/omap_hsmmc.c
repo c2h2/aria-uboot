@@ -295,7 +295,7 @@ static int mmc_send_cmd(struct mmc *mmc, struct mmc_cmd *cmd,
 	 * retry not supported by mmc.c(core file)
 	 */
 	if (cmd->cmdidx == SD_CMD_APP_SEND_SCR)
-		udelay(35000); /* wait 35 ms */
+		udelay(20000); /* wait 20 ms */
 
 	if (!(cmd->resp_type & MMC_RSP_PRESENT))
 		flags = 0;
@@ -338,7 +338,7 @@ static int mmc_send_cmd(struct mmc *mmc, struct mmc_cmd *cmd,
 	do {
 		mmc_stat = readl(&mmc_base->stat);
 		if (get_timer(0) - start > MAX_RETRY_MS) {
-			printf("%s : timeout: No status update\n", __func__);
+			//printf("%s : timeout: No status update\n", __func__);
 			return TIMEOUT;
 		}
 	} while (!mmc_stat);

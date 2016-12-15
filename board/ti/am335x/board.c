@@ -429,16 +429,18 @@ void am33xx_spl_board_init(void)
 #endif
 	/* Set DCDC2 (MPU) voltage to 1.275V */
 	//if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
-	if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
-		printf("tps65217_voltage_updatei(DCDC2) failure\n");
-		return;
-	}
+	//if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
+		//printf("tps65217_voltage_update(DCDC2) failure\n");
+		//return;
+	//}
 
  	/* DDR3 Voltage , for 1.35v */
-        if (tps65217_voltage_update(DEFDCDC1, 0x11)) {
-                printf("tps65217_voltage_update(DCDC1) failure\n");
-                return;
-        }
+        //if (tps65217_voltage_update(DEFDCDC1, 0x11)) {
+        //tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV);
+        //tps65217_voltage_update(DEFDCDC1, 0x11);
+                 //printf("tps65217_voltage_update(DCDC1) failure\n");
+                //return;
+        //}
 
 #if 0
 	/* Set LDO3, LDO4 output voltage to 3.3V */
@@ -447,7 +449,7 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(800);
+	mpu_pll_config(820);
 	puts("CPU:  800MHz\n");
 	return;
 
@@ -481,19 +483,19 @@ void s_init(void)
 	enable_uart0_pin_mux();
 #endif /* CONFIG_SERIAL1 */
 #ifdef CONFIG_SERIAL2
-	enable_uart1_pin_mux();
+	//enable_uart1_pin_mux();
 #endif /* CONFIG_SERIAL2 */
 #ifdef CONFIG_SERIAL3
-	enable_uart2_pin_mux();
+	//enable_uart2_pin_mux();
 #endif /* CONFIG_SERIAL3 */
 #ifdef CONFIG_SERIAL4
-	enable_uart3_pin_mux();
+	//enable_uart3_pin_mux();
 #endif /* CONFIG_SERIAL4 */
 #ifdef CONFIG_SERIAL5
-	enable_uart4_pin_mux();
+	//enable_uart4_pin_mux();
 #endif /* CONFIG_SERIAL5 */
 #ifdef CONFIG_SERIAL6
-	enable_uart5_pin_mux();
+	//enable_uart5_pin_mux();
 #endif /* CONFIG_SERIAL6 */
 
 	enable_aria_sound_pin_mux();
@@ -517,33 +519,31 @@ void s_init(void)
 	/*for Ariaboad version A8 or later, sound and net reset pins are controlled by gpio that connected to CPU
 	we need to pull down RESET pin for 50ms */
         gpio_request(GPIO_ARIA_SOUND, "emu1");
-	gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
+	//gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
         //gpio_direction_output(GPIO_ARIA_SOUND, 1);
 	//udelay(10000);
 	
-	gpio_direction_output(GPIO_ARIA_PHY, 0);
+	//gpio_direction_output(GPIO_ARIA_PHY, 0);
         gpio_direction_output(GPIO_ARIA_SOUND, 0);
-	udelay(50000);
+	udelay(5000); //3106 reset wait.
 
-        gpio_direction_output(GPIO_ARIA_SOUND, 1);
-        gpio_direction_output(GPIO_ARIA_PHY, 1);
+        //gpio_direction_output(GPIO_ARIA_PHY, 1);
 
 	/* Initalize the board header */
-	enable_i2c0_pin_mux();
-	i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
+	//enable_i2c0_pin_mux();
+	//i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 
 	enable_board_pin_mux(&header);
+
+        gpio_direction_output(GPIO_ARIA_SOUND, 1);
  
 	/* c2h2 setting ddr3 */ 
-	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data,
-		&ddr3_beagleblack_cmd_ctrl_data,
-		&ddr3_beagleblack_emif_reg_data);
+	config_ddr(420, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
 	puts("DDR3: 800MHz\n");
 
 #if 0
-	config_ddr(303, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,
-		&k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
-	puts("DDR3: 400MHz\n");
+	//config_ddr(400, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data, &k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
+	//puts("DDR3: 400MHz\n");
 #endif
 
 #endif
