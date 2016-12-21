@@ -25,8 +25,8 @@
 #define CONFIG_DMA_COHERENT
 #define CONFIG_DMA_COHERENT_SIZE	(1 << 20)
 
-#define CONFIG_ENV_SIZE			(16 << 10)	/* 16 KiB */
-#define CONFIG_SYS_MALLOC_LEN		(1024 << 10)
+#define CONFIG_ENV_SIZE			(8 << 10)	/* 16 KiB */
+#define CONFIG_SYS_MALLOC_LEN		(512 << 10)
 #undef  CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
 #define CONFIG_SYS_PROMPT		"AriaU> "
@@ -63,6 +63,7 @@
 	"rdaddr=0x81000000\0" \
 	"bootfile=uImage\0" \
 	"fdtfile=\0" \
+	"verify=n\0" \
 	"console=ttyO0,115200n8\0" \
 	"optargs=\0" \
 	"mmcroot=/dev/mmcblk0p2 ro\0" \
