@@ -229,8 +229,7 @@ int abortboot(int bootdelay)
 #ifdef CONFIG_MENUPROMPT
 	printf(CONFIG_MENUPROMPT);
 #else
-	if (bootdelay >= 0) 
-		printf("Hit any key to stop autoboot: %2d ", bootdelay);
+	//if (bootdelay >= 0) printf("Hit any key to stop autoboot: %2d ", bootdelay);
 #endif
 
 #if defined CONFIG_ZERO_BOOTDELAY_CHECK

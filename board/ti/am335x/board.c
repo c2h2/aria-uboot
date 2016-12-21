@@ -241,35 +241,6 @@ static void rtc32k_enable(void)
 	writel((1 << 3) | (1 << 6), &rtc->osc);
 }
 
-static const struct ddr_data ddr2_data = {
-	.datardsratio0 = ((MT47H128M16RT25E_RD_DQS<<30) |
-			  (MT47H128M16RT25E_RD_DQS<<20) |
-			  (MT47H128M16RT25E_RD_DQS<<10) |
-			  (MT47H128M16RT25E_RD_DQS<<0)),
-	.datawdsratio0 = ((MT47H128M16RT25E_WR_DQS<<30) |
-			  (MT47H128M16RT25E_WR_DQS<<20) |
-			  (MT47H128M16RT25E_WR_DQS<<10) |
-			  (MT47H128M16RT25E_WR_DQS<<0)),
-	.datawiratio0 = ((MT47H128M16RT25E_PHY_WRLVL<<30) |
-			 (MT47H128M16RT25E_PHY_WRLVL<<20) |
-			 (MT47H128M16RT25E_PHY_WRLVL<<10) |
-			 (MT47H128M16RT25E_PHY_WRLVL<<0)),
-	.datagiratio0 = ((MT47H128M16RT25E_PHY_GATELVL<<30) |
-			 (MT47H128M16RT25E_PHY_GATELVL<<20) |
-			 (MT47H128M16RT25E_PHY_GATELVL<<10) |
-			 (MT47H128M16RT25E_PHY_GATELVL<<0)),
-	.datafwsratio0 = ((MT47H128M16RT25E_PHY_FIFO_WE<<30) |
-			  (MT47H128M16RT25E_PHY_FIFO_WE<<20) |
-			  (MT47H128M16RT25E_PHY_FIFO_WE<<10) |
-			  (MT47H128M16RT25E_PHY_FIFO_WE<<0)),
-	.datawrsratio0 = ((MT47H128M16RT25E_PHY_WR_DATA<<30) |
-			  (MT47H128M16RT25E_PHY_WR_DATA<<20) |
-			  (MT47H128M16RT25E_PHY_WR_DATA<<10) |
-			  (MT47H128M16RT25E_PHY_WR_DATA<<0)),
-	.datauserank0delay = MT47H128M16RT25E_PHY_RANK0_DELAY,
-	.datadldiff0 = PHY_DLL_LOCK_DIFF,
-};
-
 static const struct ddr_data ddr3_beagleblack_data = { 
  .datardsratio0 = MT41K256M16HA125E_RD_DQS, 
  .datawdsratio0 = MT41K256M16HA125E_WR_DQS, 
@@ -299,20 +270,6 @@ static const struct cmd_control ddr3_beagleblack_cmd_ctrl_data = {
  .cmd2dldiff = MT41K256M16HA125E_DLL_LOCK_DIFF, 
  .cmd2iclkout = MT41K256M16HA125E_INVERT_CLKOUT, 
 }; 
-
-static const struct cmd_control ddr2_cmd_ctrl_data = {
-	.cmd0csratio = MT47H128M16RT25E_RATIO,
-	.cmd0dldiff = MT47H128M16RT25E_DLL_LOCK_DIFF,
-	.cmd0iclkout = MT47H128M16RT25E_INVERT_CLKOUT,
-
-	.cmd1csratio = MT47H128M16RT25E_RATIO,
-	.cmd1dldiff = MT47H128M16RT25E_DLL_LOCK_DIFF,
-	.cmd1iclkout = MT47H128M16RT25E_INVERT_CLKOUT,
-
-	.cmd2csratio = MT47H128M16RT25E_RATIO,
-	.cmd2dldiff = MT47H128M16RT25E_DLL_LOCK_DIFF,
-	.cmd2iclkout = MT47H128M16RT25E_INVERT_CLKOUT,
-};
 
 static struct emif_regs ddr3_beagleblack_emif_reg_data = { 
  .sdram_config = MT41K256M16HA125E_EMIF_SDCFG, 
@@ -346,15 +303,6 @@ static struct cmd_control k4b2g1646_cmd_ctrl_data ={
         .cmd2csratio = K4B2G1646EBIH9_RATIO,
         .cmd2dldiff = K4B2G1646EBIH9_DLL_LOCK_DIFF,
         .cmd2iclkout = K4B2G1646EBIH9_INVERT_CLKOUT,
-};
-
-static const struct emif_regs ddr2_emif_reg_data = {
-	.sdram_config = MT47H128M16RT25E_EMIF_SDCFG,
-	.ref_ctrl = MT47H128M16RT25E_EMIF_SDREF,
-	.sdram_tim1 = MT47H128M16RT25E_EMIF_TIM1,
-	.sdram_tim2 = MT47H128M16RT25E_EMIF_TIM2,
-	.sdram_tim3 = MT47H128M16RT25E_EMIF_TIM3,
-	.emif_ddr_phy_ctlr_1 = MT47H128M16RT25E_EMIF_READ_LATENCY,
 };
 
 static const struct ddr_data ddr3_data = {
@@ -479,26 +427,15 @@ void s_init(void)
 	/* UART softreset */
 	u32 regVal;
 
+        gpio_request(GPIO_ARIA_SOUND, "emu1");
+        gpio_direction_output(GPIO_ARIA_SOUND, 0);
+	udelay(1500); //3106 reset wait.
+
 #ifdef CONFIG_SERIAL1
 	enable_uart0_pin_mux();
 #endif /* CONFIG_SERIAL1 */
-#ifdef CONFIG_SERIAL2
-	//enable_uart1_pin_mux();
-#endif /* CONFIG_SERIAL2 */
-#ifdef CONFIG_SERIAL3
-	//enable_uart2_pin_mux();
-#endif /* CONFIG_SERIAL3 */
-#ifdef CONFIG_SERIAL4
-	//enable_uart3_pin_mux();
-#endif /* CONFIG_SERIAL4 */
-#ifdef CONFIG_SERIAL5
-	//enable_uart4_pin_mux();
-#endif /* CONFIG_SERIAL5 */
-#ifdef CONFIG_SERIAL6
-	//enable_uart5_pin_mux();
-#endif /* CONFIG_SERIAL6 */
 
-	enable_aria_sound_pin_mux();
+	//enable_aria_sound_pin_mux();
 
 	regVal = readl(&uart_base->uartsyscfg);
 	regVal |= UART_RESET;
@@ -518,14 +455,11 @@ void s_init(void)
 
 	/*for Ariaboad version A8 or later, sound and net reset pins are controlled by gpio that connected to CPU
 	we need to pull down RESET pin for 50ms */
-        gpio_request(GPIO_ARIA_SOUND, "emu1");
 	//gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
         //gpio_direction_output(GPIO_ARIA_SOUND, 1);
 	//udelay(10000);
 	
 	//gpio_direction_output(GPIO_ARIA_PHY, 0);
-        gpio_direction_output(GPIO_ARIA_SOUND, 0);
-	udelay(5000); //3106 reset wait.
 
         //gpio_direction_output(GPIO_ARIA_PHY, 1);
 
@@ -533,18 +467,17 @@ void s_init(void)
 	//enable_i2c0_pin_mux();
 	//i2c_init(CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 
-	enable_board_pin_mux(&header);
+	//enable_board_pin_mux(&header);
 
-        gpio_direction_output(GPIO_ARIA_SOUND, 1);
  
 	/* c2h2 setting ddr3 */ 
 	config_ddr(410, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
 	puts("DDR3: 800MHz\n");
 
-#if 0
+        gpio_direction_output(GPIO_ARIA_SOUND, 1);
+
 	//config_ddr(400, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data, &k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
 	//puts("DDR3: 400MHz\n");
-#endif
 
 #endif
 }
