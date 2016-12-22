@@ -42,11 +42,17 @@
 
 #define CONFIG_SYS_CACHELINE_SIZE       64
 
+#define CONFIG_ZERO_BOOTDELAY_CHECK 
+#define CONFIG_SILENT_CONSOLE
+
 /* commands to include */
 #include <config_cmd_default.h>
 
 #define CONFIG_CMD_ASKENV
 #define CONFIG_VERSION_VARIABLE
+
+#undef CONFIG_PCMCIA
+#undef CONFIG_CMD_PCMCIA
 
 /*c2h2 change nandimgsize from 0x500000 to 0x270000, ie max allowed kernel size for nandboot is 2.5MiB*/
 
@@ -68,17 +74,6 @@
 	"optargs=\0" \
 	"mmcroot=/dev/mmcblk0p2 ro\0" \
 	"mmcrootfstype=ext4 rootwait\0" \
-	"nandroot=ubi0:rootfs rw ubi.mtd=7,2048\0" \
-	"nandrootfstype=ubifs rootwait=1\0" \
-	"nandsrcaddr=0x280000\0" \
-	"nandimgsize=0x270000\0" \
-	"rootpath=/export/rootfs\0" \
-	"nfsopts=nolock\0" \
-	"static_ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}:${hostname}" \
-		"::off\0" \
-	"ramroot=/dev/ram0 rw ramdisk_size=65536 initrd=${rdaddr},64M\0" \
-	"ramrootfstype=ext2\0" \
-	"ip_method=none\0" \
 	"bootargs_defaults=setenv bootargs " \
 		"console=${console} " \
 		"${optargs}\0" \
@@ -86,110 +81,23 @@
 		"setenv bootargs ${bootargs} " \
 		"root=${mmcroot} " \
 		"rootfstype=${mmcrootfstype} ip=${ip_method}\0" \
-	"nandargs=setenv bootargs console=${console} " \
-		"${optargs} " \
-		"root=${nandroot} " \
-		"rootfstype=${nandrootfstype}\0" \
-	"spiroot=/dev/mtdblock4 rw\0" \
-	"spirootfstype=jffs2\0" \
-	"spisrcaddr=0xe0000\0" \
-	"spiimgsize=0x362000\0" \
-	"spibusno=0\0" \
-	"spiargs=setenv bootargs console=${console} " \
-		"${optargs} " \
-		"root=${spiroot} " \
-		"rootfstype=${spirootfstype}\0" \
-	"netargs=setenv bootargs console=${console} " \
-		"${optargs} " \
-		"root=/dev/nfs " \
-		"nfsroot=${serverip}:${rootpath},${nfsopts} rw " \
-		"ip=dhcp\0" \
 	"bootenv=uEnv.txt\0" \
 	"loadbootenv=fatload mmc ${mmcdev} ${loadaddr} ${bootenv}\0" \
-	"importbootenv=echo Importing environment from mmc ...; " \
-		"env import -t $loadaddr $filesize\0" \
-	"ramargs=setenv bootargs console=${console} " \
-		"${optargs} " \
-		"root=${ramroot} " \
-		"rootfstype=${ramrootfstype}\0" \
-	"loadramdisk=fatload mmc ${mmcdev} ${rdaddr} ramdisk.gz\0" \
+	"importbootenv=env import -t $loadaddr $filesize\0" \
 	"loaduimagefat=fatload mmc ${mmcdev} ${kloadaddr} ${bootfile}\0" \
 	"loaduimage=ext2load mmc ${mmcdev}:2 ${kloadaddr} /boot/${bootfile}\0" \
-	"mmcboot=echo Booting from mmc ...; " \
-		"run mmcargs; " \
+	"mmcboot=run mmcargs; " \
 		"bootm ${kloadaddr}\0" \
-	"nandboot=echo Booting from nand ...; " \
-		"run nandargs; " \
-		"nand read ${loadaddr} ${nandsrcaddr} ${nandimgsize}; " \
-		"bootm ${loadaddr}\0" \
-	"spiboot=echo Booting from spi ...; " \
-		"run spiargs; " \
-		"sf probe ${spibusno}:0; " \
-		"sf read ${loadaddr} ${spisrcaddr} ${spiimgsize}; " \
-		"bootm ${loadaddr}\0" \
-	"netboot=echo Booting from network ...; " \
-		"setenv autoload no; " \
-		"dhcp; " \
-		"tftp ${loadaddr} ${bootfile}; " \
-		"run netargs; " \
-		"bootm ${loadaddr}\0" \
-	"ramboot=echo Booting from ramdisk ...; " \
-		"run ramargs; " \
-		"bootm ${loadaddr}\0" \
-	"findfdt="\
-		"if test $board_name = A335BONE; then " \
-			"setenv fdtfile am335x-bone.dtb; fi; " \
-		"if test $board_name = A33515BB; then " \
-			"setenv fdtfile am335x-evm.dtb; fi; " \
-		"if test $board_name = A335X_SK; then " \
-			"setenv fdtfile am335x-evmsk.dtb; fi\0" \
 
 #endif
 
-#ifndef CONFIG_RESTORE_FLASH
 #define CONFIG_BOOTCOMMAND \
-	"mmc dev ${mmcdev}; if mmc rescan; then " \
-		"echo SD/MMC found on device ${mmcdev};" \
-		"if run loadbootenv; then " \
-			"echo Loaded environment from ${bootenv};" \
-			"run importbootenv;" \
-		"fi;" \
-		"if test -n $uenvcmd; then " \
-			"echo Running uenvcmd ...;" \
-			"run uenvcmd;" \
-		"fi;" \
-		"if run loaduimagefat; then " \
-			"run mmcboot;" \
-		"elif run loaduimage; then " \
-			"run mmcboot;" \
-		"else " \
-			"echo Could not find ${bootfile} ;" \
-		"fi;" \
-	"else " \
-		"run nandboot;" \
-	"fi;" \
+	"mmc dev ${mmcdev}; " \
+	"run loadbootenv;" \
+	"run importbootenv;" \
+	"run loaduimagefat;" \
+	"run mmcboot;" \
 
-#else
-
-
-#ifdef CONFIG_SPL_USBETH_SUPPORT
-#define CONFIG_BOOTCOMMAND \
-	"setenv autoload no; " \
-	"setenv ethact usb_ether; " \
-	"dhcp; "	\
-	"if tftp 80000000 debrick.scr; then "	\
-		"source 80000000; "	\
-	"fi"
-#else
-#define CONFIG_BOOTCOMMAND \
-	"setenv autoload no; " \
-	"setenv ethact cpsw; " \
-	"dhcp; "	\
-	"if tftp 80000000 debrick.scr; then "	\
-		"source 80000000; "	\
-	"fi"
-#endif
-#endif
 
 /* Clock Defines */
 #define V_OSCK				24000000  /* Clock output from T2 */
@@ -284,7 +192,6 @@
  /* Platform/Board specific defs */
 #define CONFIG_SYS_TIMERBASE		0x48040000	/* Use Timer2 */
 #define CONFIG_SYS_PTV			2	/* Divisor: 2^(PTV+1) => 8 */
-#define CONFIG_SYS_HZ			1000
 
 /* NS16550 Configuration */
 #define CONFIG_SYS_NS16550
@@ -300,13 +207,11 @@
 #define CONFIG_SYS_NS16550_COM6		0x481aa000	/* UART5 */
 
 /* I2C Configuration */
-#define CONFIG_I2C
-#define CONFIG_CMD_I2C
-#define CONFIG_HARD_I2C
-#define CONFIG_SYS_I2C_SPEED		100000
-#define CONFIG_SYS_I2C_SLAVE		1
-#define CONFIG_I2C_MULTI_BUS
-#define CONFIG_DRIVER_OMAP24XX_I2C
+#undef CONFIG_I2C
+#undef CONFIG_CMD_I2C
+#undef CONFIG_HARD_I2C
+#undef CONFIG_I2C_MULTI_BUS
+#undef CONFIG_DRIVER_OMAP24XX_I2C
 /*#define CONFIG_CMD_EEPROM
 #define CONFIG_ENV_EEPROM_IS_ON_I2C
 #define CONFIG_SYS_I2C_EEPROM_ADDR	0x50	
@@ -349,7 +254,7 @@
 #define CONFIG_SPL_GPIO_SUPPORT
 
 /*#define CONFIG_SPL_YMODEM_SUPPORT
-#define CONFIG_SPL_NET_SUPPORT
+#dfine CONFIG_SPL_NET_SUPPORT
 #define CONFIG_SPL_NET_VCI_STRING	"AM335x U-Boot SPL" 
 #define CONFIG_SPL_ETH_SUPPORT
 #define CONFIG_SPL_SPI_SUPPORT
@@ -427,16 +332,13 @@
 
  */
 
-#ifdef CONFIG_MUSB_HOST
-#define CONFIG_CMD_USB
-#define CONFIG_USB_STORAGE
-#endif
+#undef CONFIG_MUSB_HOST
+#undef CONFIG_CMD_USB
+#undef CONFIG_USB_STORAGE
 
-#ifdef CONFIG_MUSB_GADGET
-#define CONFIG_USB_ETHER
-#define CONFIG_USB_ETH_RNDIS
-#define CONFIG_USBNET_HOST_ADDR	"de:ad:be:af:00:00"
-#endif /* CONFIG_MUSB_GADGET */
+#undef CONFIG_MUSB_GADGET
+#undef CONFIG_USB_ETHER
+#undef CONFIG_USB_ETH_RNDIS
 
 /*
  * Default to using SPI for environment, etc.  We have multiple copies
@@ -450,6 +352,7 @@
  * 0xE0000 - 0x442000 : Linux Kernel
  * 0x442000 - 0x800000 : Userland
  */
+#undef CONFIG_SPI_BOOT
 #if defined(CONFIG_SPI_BOOT)
 # undef CONFIG_ENV_IS_NOWHERE
 # define CONFIG_ENV_IS_IN_SPI_FLASH
@@ -458,14 +361,10 @@
 # define CONFIG_ENV_SECT_SIZE		(4 << 10) /* 4 KB sectors */
 #endif /* SPI support */
 
-#if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_USBETH_SUPPORT)
-/* disable host part of MUSB in SPL */
-#undef CONFIG_MUSB_HOST
 /*
  * Disable UART SPL support so we fit within the 101KiB limit.
  */
 #undef CONFIG_SPL_ETH_SUPPORT
-#endif
 
 /* Unsupported features */
 #undef CONFIG_USE_IRQ
@@ -473,6 +372,7 @@
 #undef CONFIG_CMD_NFS
 #undef CONFIG_CMD_DHCP
 #undef CONFIG_CMD_PING
+
 /*
 #define CONFIG_CMD_PING
 #define CONFIG_DRIVER_TI_CPSW
@@ -494,29 +394,6 @@
 #define CONFIG_NAND
 */
 /* NAND support */
-#ifdef CONFIG_NAND
-#define CONFIG_CMD_NAND
-#define CONFIG_CMD_MTDPARTS
-#define MTDIDS_DEFAULT			"nand0=omap2-nand.0"
-#define MTDPARTS_DEFAULT		"mtdparts=omap2-nand.0:128k(SPL)," \
-					"128k(SPL.backup1)," \
-					"128k(SPL.backup2)," \
-					"128k(SPL.backup3),1920k(u-boot)," \
-					"128k(u-boot-env),5m(kernel),-(rootfs)"
-#define CONFIG_NAND_OMAP_GPMC
-#define GPMC_NAND_ECC_LP_x16_LAYOUT	1
-#define CONFIG_SYS_NAND_BASE		(0x08000000)	/* physical address */
-							/* to access nand at */
-							/* CS0 */
-#define CONFIG_SYS_MAX_NAND_DEVICE	1		/* Max number of NAND
-							   devices */
-#if !defined(CONFIG_SPI_BOOT)
-#undef CONFIG_ENV_IS_NOWHERE
-#define CONFIG_ENV_IS_IN_NAND
-#define CONFIG_ENV_OFFSET		0x260000 /* environment starts here */
-#define CONFIG_SYS_ENV_SECT_SIZE	(128 << 10)	/* 128 KiB */
-#endif
-#endif
 
 #endif	/* ! __CONFIG_AM335X_EVM_H */
 
