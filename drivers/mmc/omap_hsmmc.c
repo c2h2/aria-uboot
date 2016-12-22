@@ -295,7 +295,7 @@ static int mmc_send_cmd(struct mmc *mmc, struct mmc_cmd *cmd,
 	 * retry not supported by mmc.c(core file)
 	 */
 	if (cmd->cmdidx == SD_CMD_APP_SEND_SCR)
-		udelay(20000); /* wait 20 ms */
+		udelay(10000); /* wait 20 ms */
 
 	if (!(cmd->resp_type & MMC_RSP_PRESENT))
 		flags = 0;
