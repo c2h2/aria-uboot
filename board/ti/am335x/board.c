@@ -51,6 +51,7 @@ static struct uart_sys *uart_base = (struct uart_sys *)DEFAULT_UART_BASE;
 /* GPIO that controls power to DDR on EVM-SK */
 #define GPIO_ARIA_PHY		7
 #define GPIO_ARIA_SOUND		32*3 + 8
+#define GPIO_ARIA_BUZZER	32*1 + 27
 
 static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
 
@@ -397,7 +398,7 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(810);
+	mpu_pll_config(800);
 	puts("CPU:  800MHz\n");
 	return;
 
@@ -428,8 +429,12 @@ void s_init(void)
 	u32 regVal;
 
         gpio_request(GPIO_ARIA_SOUND, "emu1");
+	gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
+	gpio_request(GPIO_ARIA_BUZZER, "Buzzer");
         gpio_direction_output(GPIO_ARIA_SOUND, 0);
-	udelay(1500); //3106 reset wait.
+	gpio_direction_output(GPIO_ARIA_PHY, 0);
+	gpio_direction_output(GPIO_ARIA_BUZZER, 1);
+	udelay(40000); //3106 + phy reset wait.
 
 #ifdef CONFIG_SERIAL1
 	enable_uart0_pin_mux();
@@ -455,13 +460,7 @@ void s_init(void)
 
 	/*for Ariaboad version A8 or later, sound and net reset pins are controlled by gpio that connected to CPU
 	we need to pull down RESET pin for 50ms */
-	//gpio_request(GPIO_ARIA_PHY, "ddr_vtt_en");
-        //gpio_direction_output(GPIO_ARIA_SOUND, 1);
-	//udelay(10000);
 	
-	//gpio_direction_output(GPIO_ARIA_PHY, 0);
-
-        //gpio_direction_output(GPIO_ARIA_PHY, 1);
 
 	/* Initalize the board header */
 	//enable_i2c0_pin_mux();
@@ -471,10 +470,11 @@ void s_init(void)
 
  
 	/* c2h2 setting ddr3 */ 
-	config_ddr(410, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
+	config_ddr(400, MT41K256M16HA125E_IOCTRL_VALUE, &ddr3_beagleblack_data, &ddr3_beagleblack_cmd_ctrl_data, &ddr3_beagleblack_emif_reg_data);
 	puts("DDR3: 800MHz\n");
 
         gpio_direction_output(GPIO_ARIA_SOUND, 1);
+        gpio_direction_output(GPIO_ARIA_PHY, 1);
 
 	//config_ddr(400, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data, &k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
 	//puts("DDR3: 400MHz\n");
