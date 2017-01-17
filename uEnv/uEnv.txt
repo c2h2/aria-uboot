@@ -1,21 +1,3 @@
-kernel_file=uImage
-
-console=ttyO0,115200n8
-
-mmcrootargs=ro
-mmcrootfstype=ext4 rootwait fixrtc
-
-boot_fstype=fat
-xyz_load_image=${boot_fstype}load mmc 0:1 0x80300000 ${kernel_file}
-xyz_load_initrd=${boot_fstype}load mmc 0:1 0x81600000 ${initrd_file}; setenv initrd_size ${filesize}
-xyz_load_dtb=${boot_fstype}load mmc 0:1 0x815f0000 /dtbs/${dtb_file}
-
-xyz_mmcboot=run xyz_load_image; run xyz_load_initrd; run xyz_load_dtb; echo Booting from mmc ...
-
-video_args=setenv video 
-device_args=run video_args; run expansion_args; run mmcargs
-mmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${mmcrootfs} ${mmcrootargs} rootfstype=${mmcrootfstype} ${expansion}
-
-optargs=
-expansion_args=setenv expansion ip=${ip_method}
-loaduimage=run xyz_mmcboot; run device_args; bootz 0x80300000 0x81600000:${initrd_size} 0x815f0000
+bootargs=console=ttyO0,115200n8 androidboot.console=ttyO0 rootwait ro
+bootcmd=mmc rescan ; fatload mmc 1 82000000 uImage ; fatload mmc 1 83000000 uRamdisk ; bootm 82000000 83000000
+uenvcmd=boot
