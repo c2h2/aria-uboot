@@ -430,14 +430,14 @@ void am33xx_spl_board_init(void)
 	/* Set DCDC2 (MPU) voltage to 1.275V */
 	//if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
 	if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
-		printf("tps65217_voltage_updatei(DCDC2) failure\n");
-		return;
+		printf("tps65217_voltage_update(DCDC2) failure\n");
+		//return;
 	}
 
  	/* DDR3 Voltage , for 1.35v */
         if (tps65217_voltage_update(DEFDCDC1, 0x11)) {
                 printf("tps65217_voltage_update(DCDC1) failure\n");
-                return;
+                //return;
         }
 
 #if 0
@@ -447,8 +447,8 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(800);
-	puts("CPU:  800MHz\n");
+	mpu_pll_config(1000);
+	puts("CPU:  1000MHz\n");
 	return;
 
 }
