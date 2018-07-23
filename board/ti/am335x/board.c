@@ -447,8 +447,8 @@ void am33xx_spl_board_init(void)
 	if (tps65217_reg_write(PROT_LEVEL_2, DEFLS2, LDO_VOLTAGE_OUT_3_3, LDO_MASK))	printf("tps65217_reg_write failure\n");
 #endif
 
-	mpu_pll_config(800);
-	puts("CPU:  800MHz\n");
+	mpu_pll_config(1000);
+	puts("CPU: 1000MHz\n");
 	return;
 
 }
@@ -544,7 +544,7 @@ void s_init(void)
 
 	config_ddr(303, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,
 		&k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
-	puts("DDR3: 400MHz\n");
+	puts("DDR3: 303MHz\n");
 
 #endif
 }
