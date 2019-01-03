@@ -429,6 +429,8 @@ void am33xx_spl_board_init(void)
 #endif
 	/* Set DCDC2 (MPU) voltage to 1.275V */
 	//if (tps65217_voltage_update(DEFDCDC2, DCDC_VOLT_SEL_1275MV)) {
+
+#if 0
 	if (tps65217_voltage_update(DEFDCDC2, 0x0E)) {
 		printf("tps65217_voltage_updatei(DCDC2) failure\n");
 		return;
@@ -439,6 +441,7 @@ void am33xx_spl_board_init(void)
                 printf("tps65217_voltage_update(DCDC1) failure\n");
                 return;
         }
+#endif
 
 #if 0
 	/* Set LDO3, LDO4 output voltage to 3.3V */
