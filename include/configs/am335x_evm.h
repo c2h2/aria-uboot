@@ -87,6 +87,10 @@
 		"setenv bootargs ${bootargs} " \
 		"root=${mmcroot} " \
 		"rootfstype=${mmcrootfstype} ip=${ip_method}\0" \
+	"zmmcargs=run bootargs_defaults;" \
+		"setenv bootargs ${bootargs} " \
+		"root=${zmmcroot} " \
+		"rootfstype=${mmcrootfstype} ip=${ip_method}\0" \
 	"nandargs=setenv bootargs console=${console} " \
 		"${optargs} " \
 		"root=${nandroot} " \
@@ -125,10 +129,10 @@
                 "run mmcargs; " \
                 "bootm ${kloadaddr} - ${fdtaddr}\0" \
         "mmczboot=echo Booting from mmc ...; " \
-                "run mmcargs; " \
+                "run zmmcargs; " \
                 "bootz ${kloadaddr}\0" \
         "mmczbootwithdtb=echo Booting from mmc with device tree...; " \
-                "run mmcargs; " \
+                "run zmmcargs; " \
                 "bootz ${kloadaddr} - ${fdtaddr}\0" \
 	"nandboot=echo Booting from nand ...; " \
 		"run nandargs; " \
