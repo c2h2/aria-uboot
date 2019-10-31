@@ -51,6 +51,7 @@
 /*c2h2 change nandimgsize from 0x500000 to 0x270000, ie max allowed kernel size for nandboot is 2.5MiB*/
 
 /* set to negative value for no autoboot */
+#define CONFIG_CMD_BOOTZ
 #define CONFIG_BOOTDELAY		0
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
@@ -58,11 +59,12 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"loadaddr=0x80200000\0" \
 	"kloadaddr=0x80007fc0\0" \
-	"fdtaddr=0x80F80000\0" \
+	"fdtaddr=0x80f80000\0" \
 	"fdt_high=0xffffffff\0" \
 	"rdaddr=0x81000000\0" \
 	"bootfile=uImage\0" \
-	"fdtfile=\0" \
+        "zbootfile=zImage\0" \
+	"fdtfile=am335x-evm.dtb\0" \
 	"console=ttyO0,115200n8\0" \
 	"optargs=\0" \
 	"mmcroot=/dev/mmcblk0p2 ro\0" \
@@ -113,10 +115,21 @@
 		"rootfstype=${ramrootfstype}\0" \
 	"loadramdisk=fatload mmc ${mmcdev} ${rdaddr} ramdisk.gz\0" \
 	"loaduimagefat=fatload mmc ${mmcdev} ${kloadaddr} ${bootfile}\0" \
+        "loadzimagefat=fatload mmc ${mmcdev} ${kloadaddr} ${zbootfile}\0" \
+	"loadfdtfat=fatload mmc ${mmcdev} ${fdtaddr} ${fdtfile}\0" \
 	"loaduimage=ext2load mmc ${mmcdev}:2 ${kloadaddr} /boot/${bootfile}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run mmcargs; " \
 		"bootm ${kloadaddr}\0" \
+        "mmcbootwithdtb=echo Booting from mmc with device tree...; " \
+                "run mmcargs; " \
+                "bootm ${kloadaddr} - ${fdtaddr}\0" \
+        "mmczboot=echo Booting from mmc ...; " \
+                "run mmcargs; " \
+                "bootz ${kloadaddr}\0" \
+        "mmczbootwithdtb=echo Booting from mmc with device tree...; " \
+                "run mmcargs; " \
+                "bootz ${kloadaddr} - ${fdtaddr}\0" \
 	"nandboot=echo Booting from nand ...; " \
 		"run nandargs; " \
 		"nand read ${loadaddr} ${nandsrcaddr} ${nandimgsize}; " \
@@ -157,8 +170,18 @@
 			"echo Running uenvcmd ...;" \
 			"run uenvcmd;" \
 		"fi;" \
-		"if run loaduimagefat; then " \
-			"run mmcboot;" \
+                "if run loadzimagefat; then " \
+                        "if run loadfdtfat; then " \
+                                "run mmczbootwithdtb;" \
+                        "else " \
+                                "run mmczboot;" \
+                        "fi;" \
+		"elif run loaduimagefat; then " \
+			"if run loadfdtfat; then " \
+				"run mmcbootwithdtb;" \
+			"else " \
+	                        "run mmcboot;" \
+			"fi;" \
 		"elif run loaduimage; then " \
 			"run mmcboot;" \
 		"else " \
