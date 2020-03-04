@@ -544,9 +544,9 @@ void s_init(void)
 	puts("DDR3: 800MHz\n");
 #endif
 
-	config_ddr(303, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,
+	config_ddr(400, K4B2G1646EBIH9_IOCTRL_VALUE, &k4b2g1646_ddr3_data,
 		&k4b2g1646_cmd_ctrl_data, &k4b2g1646_emif_reg_data); 
-	puts("DDR3: 303MHz\n");
+	puts("DDR3: 400MHz\n");
 
 #endif
 }
