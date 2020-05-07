@@ -4,6 +4,9 @@ set -ex
 export CROSS_COMPILE=arm-linux-gnueabihf-
 CORES=`getconf _NPROCESSORS_ONLN`
 
+export LC_ALL="C.UTF-8"
+export LC_CTYPE="C.UTF-8"
+
 rm -rf deploy
 rm MLO || true
 rm u-boot.img || true
