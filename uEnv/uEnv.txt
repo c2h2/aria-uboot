@@ -15,7 +15,7 @@ xyz_mmcboot=run xyz_load_image; run xyz_load_initrd; run xyz_load_dtb; echo Boot
 video_args=setenv video 
 device_args=run video_args; run expansion_args; run mmcargs
 mmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${mmcrootfs} ${mmcrootargs} rootfstype=${mmcrootfstype} ${expansion}
-zmmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${zmmcrootfs} ${mmcrootargs} rootfstype=${mmcrootfstype} ${expansion}
+zmmcargs=setenv bootargs console=${console} ${optargs} ${video} root=${zmmcrootfs} ${mmcrootargs} rootfstype=${mmcrootfstype} vt.global_cursor_default=0 ${expansion}
 
 optargs=
 expansion_args=setenv expansion ip=${ip_method}
